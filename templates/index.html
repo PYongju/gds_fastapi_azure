@@ -18,138 +18,147 @@
 
         body { font-family: 'Pretendard', sans-serif; background-color: var(--bg); margin: 0; color: var(--text-main); }
 
-        /* 상단 헤더 */
+        /* 헤더 디자인 */
         .header {
             height: 60px; background: var(--white); border-bottom: 1px solid var(--border);
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 20px; position: fixed; top: 0; left: 0; right: 0; z-index: 100;
         }
-        .header-logo { color: var(--primary); font-weight: 800; font-size: 20px; display: flex; align-items: center; }
-        .header-logo span { color: #333; margin-left: 5px; font-size: 16px; }
-        .search-bar { background: #f1f3f5; border-radius: 20px; padding: 8px 20px; width: 400px; display: flex; align-items: center; }
-        .search-bar input { border: none; background: transparent; outline: none; width: 100%; margin-left: 10px; }
-        .header-icons { display: flex; gap: 20px; color: #555; }
+        .header-logo { color: var(--primary); font-weight: 800; font-size: 20px; display: flex; align-items: center; cursor: pointer; }
+        .header-logo span { color: #333; margin-left: 8px; font-size: 16px; letter-spacing: -0.5px; }
+        .search-bar { background: #f1f3f5; border-radius: 20px; padding: 8px 20px; width: 350px; display: flex; align-items: center; }
+        .search-bar input { border: none; background: transparent; outline: none; width: 100%; margin-left: 10px; font-size: 14px; }
+        .header-icons { display: flex; gap: 22px; color: #555; font-size: 18px; }
 
         .wrapper { display: flex; padding-top: 60px; }
 
-        /* 왼쪽 사이드바 */
+        /* 좌측 사이드바 */
         .left-sidebar {
             width: 70px; height: calc(100vh - 60px); background: var(--white);
             border-right: 1px solid var(--border); display: flex; flex-direction: column;
             align-items: center; padding-top: 20px; position: fixed;
         }
-        .circle-icon {
-            width: 45px; height: 45px; border-radius: 50%; background: #eee; margin-bottom: 15px;
+        .nav-icon {
+            width: 42px; height: 42px; border-radius: 50%; background: #eee; margin-bottom: 15px;
             display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; cursor: pointer;
         }
-        .circle-icon.active { background: var(--primary); color: white; }
+        .nav-icon.active { background: var(--primary); color: white; }
 
-        /* 메인 컨텐츠 */
+        /* 메인 영역 */
         .main-container { margin-left: 70px; flex: 1; display: flex; justify-content: center; padding: 30px 20px; }
         .content-area { width: 680px; margin-right: 25px; }
 
         .tabs { display: flex; justify-content: center; gap: 60px; margin-bottom: 25px; font-weight: 600; color: var(--text-sub); }
-        .tabs span.active { color: var(--primary); border-bottom: 3px solid var(--primary); padding-bottom: 10px; }
+        .tabs span { cursor: pointer; padding-bottom: 8px; }
+        .tabs span.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
 
-        /* 게시글 작성창 (상단) */
-        .write-box {
+        /* ✨ 게시글 작성 박스 디테일 */
+        .post-write-card {
             background: var(--white); border: 1px solid var(--border); border-radius: 15px;
-            padding: 20px; margin-bottom: 30px;
+            padding: 20px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
-        .write-box textarea {
+        .write-header { display: flex; align-items: center; margin-bottom: 15px; }
+        .write-header .user-label { font-weight: 700; font-size: 14px; margin-left: 10px; }
+        .post-write-card textarea {
             width: 100%; border: none; outline: none; resize: none; font-size: 16px;
-            font-family: inherit; margin-bottom: 15px; min-height: 60px;
+            font-family: inherit; min-height: 80px; color: #333;
         }
-        .write-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f8f9fa; padding-top: 15px; }
-
-        /* 공통 버튼 스타일 */
-        .btn-main {
-            background: var(--primary); color: white; border: none; padding: 8px 20px;
-            border-radius: 20px; font-weight: 700; cursor: pointer; transition: 0.2s;
+        .post-write-card textarea::placeholder { color: #adb5bd; }
+        .write-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            border-top: 1px solid #f8f9fa; padding-top: 15px; margin-top: 10px;
         }
-        .btn-main:disabled { background: #eee; cursor: default; }
+        .write-tools { display: flex; gap: 18px; color: #666; font-size: 19px; }
+        .write-tools i:hover { color: var(--primary); cursor: pointer; }
+        
+        .btn-submit-post {
+            background: #eee; color: #999; border: none; padding: 10px 24px;
+            border-radius: 25px; font-weight: 700; cursor: pointer; transition: 0.3s;
+        }
+        .btn-submit-post.active { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(18, 211, 207, 0.3); }
 
         /* 게시글 카드 */
-        .post-card { background: var(--white); border: 1px solid var(--border); border-radius: 15px; margin-bottom: 20px; padding: 25px; animation: fadeIn 0.4s ease-out; }
-        .post-header { display: flex; align-items: center; margin-bottom: 15px; }
-        .user-info { margin-left: 12px; }
-        .user-name { font-weight: 700; font-size: 15px; }
-        .artist-tag { background: var(--primary); color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; }
-        .post-time { color: var(--text-sub); font-size: 12px; }
-        .post-content { font-size: 16px; line-height: 1.6; margin-bottom: 20px; }
-        .post-stats { display: flex; gap: 20px; color: var(--text-sub); font-size: 14px; padding-bottom: 15px; border-bottom: 1px solid #f8f9fa; }
+        .post-card { background: var(--white); border: 1px solid var(--border); border-radius: 15px; margin-bottom: 20px; padding: 25px; animation: slideIn 0.4s ease-out; }
+        .post-card-header { display: flex; align-items: center; margin-bottom: 15px; }
+        .artist-tag { background: var(--primary); color: white; font-size: 10px; padding: 2px 7px; border-radius: 10px; margin-left: 6px; }
+        .post-time { color: var(--text-sub); font-size: 12px; margin-top: 2px; }
+        .post-body { font-size: 16px; line-height: 1.6; margin-bottom: 20px; white-space: pre-wrap; }
+        .post-actions { display: flex; gap: 20px; color: var(--text-sub); font-size: 14px; padding-bottom: 15px; border-bottom: 1px solid #f8f9fa; }
 
         /* 댓글 영역 */
-        .comment-composer { background: #f1f3f5; border-radius: 12px; padding: 12px; margin-top: 20px; }
-        .comment-composer textarea { width: 100%; background: transparent; border: none; outline: none; resize: none; font-size: 14px; font-family: inherit; }
-        .comment-item { display: flex; margin-top: 15px; }
-        .comment-body { margin-left: 10px; }
-        .comment-user { font-weight: 700; font-size: 13px; }
-        .comment-text { font-size: 14px; margin-top: 2px; }
+        .comment-input-wrap { background: #f1f3f5; border-radius: 12px; padding: 12px; margin-top: 20px; }
+        .comment-input-wrap textarea { width: 100%; background: transparent; border: none; outline: none; resize: none; font-size: 14px; font-family: inherit; }
+        .comment-item { display: flex; margin-top: 15px; animation: fadeIn 0.3s; }
+        .comment-content { margin-left: 10px; background: #f8f9fa; padding: 8px 12px; border-radius: 10px; flex: 1; }
+        .comment-user { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+        .comment-text { font-size: 14px; }
 
-        /* 오른쪽 위젯 */
-        .right-sidebar { width: 300px; }
+        /* 우측 위젯 */
+        .right-sidebar { width: 280px; }
         .widget { background: var(--white); border-radius: 15px; border: 1px solid var(--border); padding: 20px; margin-bottom: 20px; }
-        .widget-title { font-weight: 700; font-size: 15px; margin-bottom: 15px; display: flex; align-items: center; }
-        .widget-title i { color: var(--primary); margin-right: 8px; }
+        .widget-title { font-weight: 700; font-size: 14px; margin-bottom: 15px; display: flex; align-items: center; }
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .stat-box { background: #f8f9fa; border-radius: 10px; padding: 15px 10px; text-align: center; }
-        .stat-num { font-size: 22px; font-weight: 800; }
+        .stat-box { background: #f8f9fa; border-radius: 10px; padding: 15px 5px; text-align: center; }
+        .stat-num { font-size: 20px; font-weight: 800; margin-bottom: 3px; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
     <header class="header">
-        <div class="header-logo"><i class="fa-solid fa-bars"></i> <span>댓글 <b>넛지</b></span></div>
+        <div class="header-logo"><i class="fa-solid fa-feather-pointed"></i> <span>댓글 <b>넛지</b></span></div>
         <div class="search-bar"><i class="fa-solid fa-magnifying-glass" style="color:#adb5bd"></i><input type="text" placeholder="검색"></div>
-        <div class="header-icons"><i class="fa-solid fa-shield-halved"></i><i class="fa-solid fa-bell"></i><i class="fa-solid fa-paper-plane"></i></div>
+        <div class="header-icons"><i class="fa-solid fa-shield-cat"></i><i class="fa-solid fa-bell"></i><i class="fa-solid fa-user"></i></div>
     </header>
 
     <div class="wrapper">
         <div class="left-sidebar">
-            <div class="circle-icon active">NJ</div>
-            <div class="circle-icon">LS</div>
-            <div class="circle-icon">BT</div>
-            <div class="circle-icon">SV</div>
+            <div class="nav-icon active">NJ</div>
+            <div class="nav-icon">LS</div>
+            <div class="nav-icon">BT</div>
+            <div class="nav-icon">SV</div>
+            <div class="nav-icon" style="background:none; border:1px dashed #ccc"><i class="fa-solid fa-plus" style="color:#ccc"></i></div>
         </div>
 
         <div class="main-container">
             <div class="content-area">
                 <div class="tabs"><span class="active">Feed</span><span>Artist</span><span>Media</span></div>
 
-                <div class="write-box">
-                    <textarea id="postInput" placeholder="새로운 소식을 공유해보세요!" oninput="validatePost()"></textarea>
+                <div class="post-write-card">
+                    <div class="write-header">
+                        <div class="nav-icon" style="width:35px; height:35px; margin:0; background:var(--primary); color:white;">ME</div>
+                        <span class="user-label">나의 소식 남기기</span>
+                    </div>
+                    <textarea id="mainPostInput" placeholder="오늘 어떤 일이 있었나요? 팬들과 공유해보세요!" oninput="checkPostLength()"></textarea>
                     <div class="write-footer">
-                        <div style="color: #666; font-size: 18px; display: flex; gap: 15px;">
-                            <i class="fa-regular fa-image"></i><i class="fa-regular fa-face-smile"></i><i class="fa-solid fa-link"></i>
+                        <div class="write-tools">
+                            <i class="fa-regular fa-image"></i>
+                            <i class="fa-regular fa-face-smile-wink"></i>
+                            <i class="fa-solid fa-at"></i>
                         </div>
-                        <button id="postBtn" class="btn-main" disabled onclick="createPost()">게시하기</button>
+                        <button id="mainPostBtn" class="btn-submit-post" onclick="submitNewPost()">게시하기</button>
                     </div>
                 </div>
 
-                <div id="feedList">
+                <div id="feedContent">
                     <div class="post-card">
-                        <div class="post-header">
-                            <div class="circle-icon active" style="margin:0; width:40px; height:40px;">MJ</div>
-                            <div class="user-info">
-                                <div class="user-name">민지 <span class="artist-tag">ARTIST</span></div>
+                        <div class="post-card-header">
+                            <div class="nav-icon active" style="margin:0; width:40px; height:40px;">MJ</div>
+                            <div style="margin-left:12px;">
+                                <div style="font-weight:700; font-size:15px;">민지 <span class="artist-tag">ARTIST</span></div>
                                 <div class="post-time">15분 전</div>
                             </div>
                         </div>
-                        <div class="post-content">오늘 연습 끝! 여러분 오늘 하루도 수고했어요 🐰 💕 내일 또 만나~!</div>
-                        <div class="post-stats"><span><i class="fa-regular fa-heart"></i> 2,845</span><span><i class="fa-regular fa-comment"></i> 312</span></div>
-                        
-                        <div class="comment-area" id="comments-1">
-                            <div class="comment-item">
-                                <div class="circle-icon" style="width:30px; height:30px; font-size:10px; background:#7b61ff; color:white;">HJ</div>
-                                <div class="comment-body"><div class="comment-user">하진</div><div class="comment-text">민지 언니 수고했어요!!</div></div>
-                            </div>
+                        <div class="post-body">오늘 연습 끝! 여러분 오늘 하루도 수고했어요 🐰 💕 내일 또 만나~!</div>
+                        <div class="post-actions">
+                            <span><i class="fa-regular fa-heart"></i> 2,845</span>
+                            <span><i class="fa-regular fa-comment"></i> 312</span>
                         </div>
-
-                        <div class="comment-composer">
-                            <textarea placeholder="댓글을 입력하세요..." onkeydown="if(event.keyCode==13){addComment(this, 'comments-1'); return false;}"></textarea>
+                        <div class="comment-list" id="comment-list-0"></div>
+                        <div class="comment-input-wrap">
+                            <textarea placeholder="따뜻한 댓글을 남겨주세요..." onkeydown="handleCommentEnter(event, 0)"></textarea>
                         </div>
                     </div>
                 </div>
@@ -157,84 +166,101 @@
 
             <div class="right-sidebar">
                 <div class="widget">
-                    <div class="widget-title"><i class="fa-solid fa-chart-line"></i> 넛지 통계</div>
+                    <div class="widget-title"><i class="fa-solid fa-chart-simple" style="color:var(--primary); margin-right:8px;"></i> 넛지 통계</div>
                     <div class="stat-grid">
-                        <div class="stat-box"><div class="stat-num" style="color:var(--primary)">1</div><div class="stat-label">게시글</div></div>
-                        <div class="stat-box"><div class="stat-num" style="color:#ffcc00">0</div><div class="stat-label">주의</div></div>
-                        <div class="stat-box"><div class="stat-num" style="color:#ff5a5a">0</div><div class="stat-label">위험</div></div>
-                        <div class="stat-box"><div class="stat-num" style="color:#28a745">1</div><div class="stat-label">안전</div></div>
+                        <div class="stat-box"><div class="stat-num" id="totalPosts" style="color:var(--primary)">1</div><div style="font-size:11px; color:var(--text-sub);">게시글</div></div>
+                        <div class="stat-box"><div class="stat-num" style="color:#ffcc00">0</div><div style="font-size:11px; color:var(--text-sub);">주의</div></div>
+                        <div class="stat-box"><div class="stat-num" style="color:#ff5a5a">0</div><div style="font-size:11px; color:var(--text-sub);">위험</div></div>
+                        <div class="stat-box"><div class="stat-num" style="color:#28a745">1</div><div style="font-size:11px; color:var(--text-sub);">안전</div></div>
                     </div>
                 </div>
                 <div class="widget">
                     <div class="widget-title">커뮤니티 안내</div>
-                    <div style="font-size: 13px; color: var(--text-sub); line-height: 1.6;">
-                        비방이나 욕설 없는 클린한 커뮤니티를 만들어주세요. AI가 여러분의 소중한 댓글을 분석하고 있습니다. 💚
-                    </div>
+                    <p style="font-size:12px; color:var(--text-sub); line-height:1.6; margin:0;">
+                        AI 넛지 시스템이 깨끗한 커뮤니티 환경을 유지하고 있습니다. 모두가 행복한 소통 공간을 만들어주세요. 💚
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // 게시글 버튼 활성화 체크
-        function validatePost() {
-            const val = document.getElementById('postInput').value.trim();
-            document.getElementById('postBtn').disabled = val.length === 0;
+        let postIdx = 1;
+
+        // 게시글 입력창 버튼 활성화
+        function checkPostLength() {
+            const input = document.getElementById('mainPostInput');
+            const btn = document.getElementById('mainPostBtn');
+            if (input.value.trim().length > 0) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
         }
 
-        // 새로운 게시글 생성
-        let postCount = 2;
-        function createPost() {
-            const input = document.getElementById('postInput');
+        // 새 게시글 등록
+        function submitNewPost() {
+            const input = document.getElementById('mainPostInput');
             const content = input.value.trim();
-            const feed = document.getElementById('feedList');
-            const postId = `comments-${postCount++}`;
+            if (!content) return;
 
-            const postHtml = `
+            const feed = document.getElementById('feedContent');
+            const currentId = postIdx++;
+
+            const newPost = `
                 <div class="post-card">
-                    <div class="post-header">
-                        <div class="circle-icon" style="margin:0; width:40px; height:40px; background:var(--primary); color:white;">ME</div>
-                        <div class="user-info">
-                            <div class="user-name">나</div>
+                    <div class="post-card-header">
+                        <div class="nav-icon" style="margin:0; width:40px; height:40px; background:var(--primary); color:white;">ME</div>
+                        <div style="margin-left:12px;">
+                            <div style="font-weight:700; font-size:15px;">나</div>
                             <div class="post-time">방금 전</div>
                         </div>
                     </div>
-                    <div class="post-content">${content}</div>
-                    <div class="post-stats"><span><i class="fa-regular fa-heart"></i> 0</span><span><i class="fa-regular fa-comment"></i> 0</span></div>
-                    <div class="comment-area" id="${postId}"></div>
-                    <div class="comment-composer">
-                        <textarea placeholder="댓글을 입력하세요..." onkeydown="if(event.keyCode==13){addComment(this, '${postId}'); return false;}"></textarea>
+                    <div class="post-body">${content}</div>
+                    <div class="post-actions">
+                        <span><i class="fa-regular fa-heart"></i> 0</span>
+                        <span><i class="fa-regular fa-comment"></i> 0</span>
+                    </div>
+                    <div class="comment-list" id="comment-list-${currentId}"></div>
+                    <div class="comment-input-wrap">
+                        <textarea placeholder="따뜻한 댓글을 남겨주세요..." onkeydown="handleCommentEnter(event, ${currentId})"></textarea>
                     </div>
                 </div>
             `;
 
-            feed.insertAdjacentHTML('afterbegin', postHtml);
+            feed.insertAdjacentHTML('afterbegin', newPost); // 최신글이 위로
             input.value = '';
-            validatePost();
-            
-            // 통계 숫자 업데이트 (데모용)
-            const statNum = document.querySelector('.stat-num');
-            statNum.innerText = parseInt(statNum.innerText) + 1;
+            checkPostLength();
+            updateStat();
         }
 
-        // 댓글 추가 기능
-        function addComment(textarea, targetId) {
-            const content = textarea.value.trim();
-            if(!content) return;
+        // 댓글 엔터 처리
+        function handleCommentEnter(e, id) {
+            if (e.keyCode === 13 && !e.shiftKey) {
+                e.preventDefault();
+                const textarea = e.target;
+                const text = textarea.value.trim();
+                if (!text) return;
 
-            const target = document.getElementById(targetId);
-            const commentHtml = `
-                <div class="comment-item" style="animation: fadeIn 0.3s;">
-                    <div class="circle-icon" style="width:30px; height:30px; font-size:10px; background:var(--primary); color:white;">ME</div>
-                    <div class="comment-body">
-                        <div class="comment-user">나</div>
-                        <div class="comment-text">${content}</div>
+                const list = document.getElementById(`comment-list-${id}`);
+                const commentHtml = `
+                    <div class="comment-item">
+                        <div class="nav-icon" style="width:28px; height:28px; font-size:9px; background:var(--primary); color:white; flex-shrink:0;">ME</div>
+                        <div class="comment-content">
+                            <div class="comment-user">나</div>
+                            <div class="comment-text">${text}</div>
+                        </div>
                     </div>
-                </div>
-            `;
-            
-            target.insertAdjacentHTML('beforeend', commentHtml);
-            textarea.value = '';
+                `;
+                list.insertAdjacentHTML('beforeend', commentHtml);
+                textarea.value = '';
+            }
+        }
+
+        // 통계 숫자 업데이트
+        function updateStat() {
+            const stat = document.getElementById('totalPosts');
+            stat.innerText = parseInt(stat.innerText) + 1;
         }
     </script>
 </body>
