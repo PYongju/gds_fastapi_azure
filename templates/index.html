@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #12d3cf; /* 민트 포인트 컬러 */
+            --primary: #12d3cf;
             --bg: #f8f9fa;
             --white: #ffffff;
             --text-main: #333;
@@ -20,13 +20,49 @@
             font-family: 'Pretendard', sans-serif;
             background-color: var(--bg);
             margin: 0;
-            display: flex;
+            color: var(--text-main);
         }
+
+        /* 상단 헤더 */
+        .header {
+            height: 60px;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .header-logo { color: var(--primary); font-weight: 800; font-size: 20px; display: flex; align-items: center; }
+        .header-logo span { color: #333; margin-left: 5px; font-size: 16px; }
+
+        .search-bar {
+            background: #f1f3f5;
+            border-radius: 20px;
+            padding: 8px 20px;
+            width: 400px;
+            display: flex;
+            align-items: center;
+        }
+        .search-bar input {
+            border: none; background: transparent; outline: none; width: 100%; margin-left: 10px;
+        }
+
+        .header-icons { display: flex; gap: 20px; color: #555; }
+
+        /* 레이아웃 컨테이너 */
+        .wrapper { display: flex; padding-top: 60px; }
 
         /* 왼쪽 사이드바 */
         .left-sidebar {
             width: 70px;
-            height: 100vh;
+            height: calc(100vh - 60px);
             background: var(--white);
             border-right: 1px solid var(--border);
             display: flex;
@@ -37,214 +73,284 @@
         }
 
         .circle-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: #eee;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
+            width: 45px; height: 45px; border-radius: 50%;
+            background: #eee; margin-bottom: 15px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            transition: 0.2s;
         }
         .circle-icon.active { background: var(--primary); color: white; }
+        .circle-icon:hover { transform: scale(1.05); }
 
-        /* 메인 컨테이너 */
+        /* 메인 컨텐츠 */
         .main-container {
             margin-left: 70px;
             flex: 1;
             display: flex;
             justify-content: center;
-            padding: 20px;
+            padding: 30px 20px;
         }
 
-        .content-area { width: 680px; margin-right: 20px; }
+        .content-area { width: 680px; margin-right: 25px; }
+
+        /* 탭 메뉴 */
+        .tabs {
+            display: flex; justify-content: center; gap: 60px;
+            margin-bottom: 25px; font-weight: 600; color: var(--text-sub);
+            border-bottom: 1px solid var(--border);
+        }
+        .tabs span { padding-bottom: 10px; cursor: pointer; }
+        .tabs span.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
 
         /* 게시글 카드 */
         .post-card {
             background: var(--white);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 15px;
             margin-bottom: 20px;
-            padding: 20px;
+            padding: 25px;
         }
 
-        .post-header { display: flex; align-items: center; margin-bottom: 15px; }
+        .post-header { display: flex; align-items: center; margin-bottom: 15px; position: relative; }
         .user-info { margin-left: 12px; }
         .user-name { font-weight: 700; font-size: 15px; }
-        .artist-tag { background: var(--primary); color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
-        .post-time { color: var(--text-sub); font-size: 12px; }
+        .artist-tag { background: var(--primary); color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; vertical-align: middle; }
+        .post-time { color: var(--text-sub); font-size: 12px; margin-top: 2px; }
 
-        .post-content { font-size: 15px; line-height: 1.6; color: var(--text-main); margin-bottom: 15px; }
+        .post-content { font-size: 16px; line-height: 1.6; margin-bottom: 20px; }
 
-        /* 댓글 입력창 (이미지 스타일) */
+        .post-stats {
+            display: flex; gap: 20px; color: var(--text-sub);
+            font-size: 14px; padding-bottom: 15px; border-bottom: 1px solid #f8f9fa;
+        }
+
+        /* 댓글 입력창 */
         .comment-composer {
             background: #f1f3f5;
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 15px;
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .comment-composer textarea {
-            width: 100%;
-            background: transparent;
-            border: none;
-            outline: none;
-            resize: none;
-            font-size: 14px;
-            font-family: inherit;
+            width: 100%; background: transparent; border: none;
+            outline: none; resize: none; font-size: 14px; font-family: inherit;
         }
 
         .composer-tools {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-            color: var(--text-sub);
+            display: flex; justify-content: space-between;
+            align-items: center; margin-top: 10px;
         }
-
+        .tool-icons { color: #666; font-size: 18px; display: flex; gap: 12px; }
+        
+        .post-btn-wrap { display: flex; align-items: center; gap: 10px; }
+        .char-count { font-size: 12px; color: var(--text-sub); }
         .btn-submit {
-            background: none;
-            border: none;
-            color: var(--text-sub);
-            font-weight: 600;
-            cursor: pointer;
+            background: none; border: none; color: #adb5bd;
+            font-weight: 700; cursor: pointer; font-size: 14px;
         }
         .btn-submit.active { color: var(--primary); }
 
+        /* 댓글 리스트 */
+        .comment-item { display: flex; margin-top: 20px; }
+        .comment-body { margin-left: 12px; flex: 1; }
+        .comment-user { font-weight: 700; font-size: 14px; }
+        .comment-text { font-size: 14px; margin-top: 4px; line-height: 1.4; }
+        .comment-footer { font-size: 12px; color: var(--text-sub); margin-top: 6px; display: flex; align-items: center; gap: 10px; }
+
         /* 오른쪽 위젯 */
-        .right-sidebar { width: 280px; }
+        .right-sidebar { width: 300px; }
         .widget {
-            background: var(--white);
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            padding: 15px;
-            margin-bottom: 20px;
+            background: var(--white); border-radius: 15px;
+            border: 1px solid var(--border); padding: 20px; margin-bottom: 20px;
         }
-        .widget-title { font-weight: 700; font-size: 14px; margin-bottom: 15px; display: flex; align-items: center; }
+        .widget-title { font-weight: 700; font-size: 15px; margin-bottom: 15px; display: flex; align-items: center; }
         .widget-title i { color: var(--primary); margin-right: 8px; }
 
-        /* 통계 그리드 */
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .stat-box { background: #f8f9fa; border-radius: 8px; padding: 10px; text-align: center; }
-        .stat-num { font-size: 20px; font-weight: 700; color: #ff5a5a; }
-        .stat-label { font-size: 11px; color: var(--text-sub); }
+        .stat-box { background: #f8f9fa; border-radius: 10px; padding: 15px 10px; text-align: center; }
+        .stat-num { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+        .stat-label { font-size: 12px; color: var(--text-sub); }
 
-        .btn-nudge {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: #f8f9fa;
-            font-size: 12px;
-            cursor: pointer;
-            margin-top: 10px;
-            text-align: left;
+        /* 인기 게시글 리스트 */
+        .ranking-item { display: flex; align-items: center; margin-bottom: 15px; font-size: 14px; }
+        .rank-num { font-weight: 800; color: var(--primary); width: 25px; }
+        .rank-text { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+
+        .community-info { font-size: 13px; color: var(--text-sub); line-height: 1.6; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-    <div class="left-sidebar">
-        <div class="circle-icon active">NJ</div>
-        <div class="circle-icon">LS</div>
-        <div class="circle-icon">BT</div>
-        <div class="circle-icon">SV</div>
-    </div>
+    <header class="header">
+        <div class="header-logo"><i class="fa-solid fa-bars"></i> <span>댓글 <b>넛지</b></span></div>
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass" style="color:#adb5bd"></i>
+            <input type="text" placeholder="검색">
+        </div>
+        <div class="header-icons">
+            <i class="fa-solid fa-hammer"></i>
+            <i class="fa-solid fa-shield-halved"></i>
+            <i class="fa-solid fa-bell"></i>
+            <i class="fa-solid fa-paper-plane"></i>
+        </div>
+    </header>
 
-    <div class="main-container">
-        <div class="content-area">
-            <div style="display:flex; justify-content:center; gap:40px; margin-bottom:20px; font-weight:600; color:var(--text-sub);">
-                <span style="color:var(--primary); border-bottom:2px solid var(--primary); padding-bottom:5px;">Feed</span>
-                <span>Artist</span>
-                <span>Media</span>
-            </div>
-
-            <div class="post-card">
-                <div class="post-header">
-                    <div class="circle-icon active" style="margin:0">MJ</div>
-                    <div class="user-info">
-                        <div class="user-name">민지 <span class="artist-tag">ARTIST</span></div>
-                        <div class="post-time">15분 전</div>
-                    </div>
-                </div>
-                <div class="post-content">오늘 연습 끝! 여러분 오늘 하루도 수고했어요 🐰 💕 내일 또 만나~!</div>
-                
-                <div style="display:flex; gap:20px; color:var(--text-sub); font-size:13px; margin-bottom:15px;">
-                    <span><i class="fa-regular fa-heart"></i> 2,845</span>
-                    <span><i class="fa-regular fa-comment"></i> 312</span>
-                </div>
-
-                <div class="comment-composer">
-                    <textarea id="commentInput" placeholder="댓글을 입력해 보세요..." rows="2"></textarea>
-                    <div class="composer-tools">
-                        <div>
-                            <i class="fa-regular fa-image" style="margin-right:10px;"></i>
-                            <i class="fa-solid fa-bars-staggered"></i>
-                        </div>
-                        <button class="btn-submit active" onclick="submitPost()">게시</button>
-                    </div>
-                </div>
-
-                <div id="commentList" style="margin-top:20px;"></div>
-            </div>
+    <div class="wrapper">
+        <div class="left-sidebar">
+            <div class="circle-icon active">NJ</div>
+            <div class="circle-icon">LS</div>
+            <div class="circle-icon">BT</div>
+            <div class="circle-icon">SV</div>
+            <div class="circle-icon" style="background:none; border: 1px dashed #ccc;"><i class="fa-solid fa-plus" style="color:#ccc"></i></div>
         </div>
 
-        <div class="right-sidebar">
-            <div class="widget">
-                <div class="widget-title"><i class="fa-solid fa-flask"></i> 실시간 데모</div>
-                <div style="font-size:12px; color:var(--text-sub);">실시간 댓글을 분석해보세요</div>
-                <button class="btn-nudge">바로가기 <i class="fa-solid fa-arrow-right" style="float:right"></i></button>
+        <div class="main-container">
+            <div class="content-area">
+                <div class="tabs">
+                    <span class="active">Feed</span>
+                    <span>Artist</span>
+                    <span>Media</span>
+                </div>
+
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="circle-icon active" style="margin:0; width:40px; height:40px;">MJ</div>
+                        <div class="user-info">
+                            <div class="user-name">민지 <span class="artist-tag">ARTIST</span></div>
+                            <div class="post-time">15분 전</div>
+                        </div>
+                        <i class="fa-solid fa-ellipsis" style="position:absolute; right:0; color:#ccc;"></i>
+                    </div>
+                    <div class="post-content">오늘 연습 끝! 여러분 오늘 하루도 수고했어요 🐰 💕 내일 또 만나~!</div>
+                    
+                    <div class="post-stats">
+                        <span><i class="fa-regular fa-heart"></i> 2,845</span>
+                        <span><i class="fa-regular fa-comment"></i> 312</span>
+                        <span style="margin-left:auto"><i class="fa-solid fa-share-nodes"></i></span>
+                    </div>
+
+                    <div class="comment-composer">
+                        <textarea id="commentInput" placeholder="댓글을 입력해 보세요..." rows="2" oninput="toggleBtn()"></textarea>
+                        <div class="composer-tools">
+                            <div class="tool-icons">
+                                <i class="fa-regular fa-image"></i>
+                                <i class="fa-solid fa-bars-staggered"></i>
+                            </div>
+                            <div class="post-btn-wrap">
+                                <span class="char-count">0 / 500</span>
+                                <button id="submitBtn" class="btn-submit" onclick="submitPost()">게시</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="commentList">
+                        <div class="comment-item">
+                            <div class="circle-icon" style="width:32px; height:32px; font-size:10px; background:#7b61ff; color:white;">HJ</div>
+                            <div class="comment-body">
+                                <div class="comment-user">하진</div>
+                                <div class="comment-text">민지 언니 수고했어요!! 오늘도 최고 💖</div>
+                                <div class="comment-footer">12분 전 · <i class="fa-regular fa-heart"></i> 48</div>
+                            </div>
+                        </div>
+                        <div class="comment-item">
+                            <div class="circle-icon" style="width:32px; height:32px; font-size:10px; background:#ff6b6b; color:white;">YN</div>
+                            <div class="comment-body">
+                                <div class="comment-user">윤아</div>
+                                <div class="comment-text">내일 컴백 너무 기대돼요!!! 🎉</div>
+                                <div class="comment-footer">10분 전 · <i class="fa-regular fa-heart"></i> 23</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="widget">
-                <div class="widget-title"><i class="fa-solid fa-chart-line"></i> 넛지 통계</div>
-                <div class="stat-grid">
-                    <div class="stat-box"><div class="stat-num" style="color:#12d3cf">0</div><div class="stat-label">총 검사</div></div>
-                    <div class="stat-box"><div class="stat-num" style="color:#ffcc00">0</div><div class="stat-label">주의</div></div>
-                    <div class="stat-box"><div class="stat-num">0</div><div class="stat-label">위험</div></div>
-                    <div class="stat-box"><div class="stat-num" style="color:#28a745">0</div><div class="stat-label">안전</div></div>
+            <div class="right-sidebar">
+                <div class="widget">
+                    <div class="widget-title"><i class="fa-solid fa-flask"></i> 실시간 데모</div>
+                    <div style="font-size:13px; color:var(--text-sub); margin-bottom:15px;">실시간 댓글을 분석해보세요</div>
+                    <button style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:#fff; font-size:13px; font-weight:600; cursor:pointer;">바로가기 <i class="fa-solid fa-arrow-right" style="float:right"></i></button>
+                </div>
+
+                <div class="widget">
+                    <div class="widget-title"><i class="fa-solid fa-chart-line"></i> 넛지 통계</div>
+                    <div class="stat-grid">
+                        <div class="stat-box"><div class="stat-num" style="color:var(--primary)">0</div><div class="stat-label">총 검사</div></div>
+                        <div class="stat-box"><div class="stat-num" style="color:#ffcc00">0</div><div class="stat-label">주의</div></div>
+                        <div class="stat-box"><div class="stat-num" style="color:#ff5a5a">0</div><div class="stat-label">위험</div></div>
+                        <div class="stat-box"><div class="stat-num" style="color:#28a745">0</div><div class="stat-label">안전</div></div>
+                    </div>
+                </div>
+
+                <div class="widget">
+                    <div class="widget-title"><i class="fa-solid fa-fire"></i> 인기 게시글</div>
+                    <div class="ranking-item">
+                        <span class="rank-num">1</span><span class="rank-text">뉴진스 컴백 D-3 🎉</span>
+                    </div>
+                    <div class="ranking-item">
+                        <span class="rank-num">2</span><span class="rank-text">민지 셀카 모음.zip</span>
+                    </div>
+                    <div class="ranking-item">
+                        <span class="rank-num">3</span><span class="rank-text">오늘의 팬아트 공유</span>
+                    </div>
+                </div>
+
+                <div class="widget">
+                    <div class="widget-title">커뮤니티 안내</div>
+                    <div class="community-info">
+                        건전한 소통 문화를 위해 AI 기반 댓글 넛지 시스템이 운영되고 있습니다. 타인을 존중하는 댓글을 작성해 주세요. 💚
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        async function submitPost() {
+        function toggleBtn() {
+            const input = document.getElementById('commentInput');
+            const btn = document.getElementById('submitBtn');
+            const count = document.querySelector('.char-count');
+            
+            count.innerText = `${input.value.length} / 500`;
+            
+            if(input.value.trim().length > 0) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        }
+
+        function submitPost() {
             const input = document.getElementById('commentInput');
             const content = input.value.trim();
             if(!content) return;
 
-            try {
-                const response = await fetch('/comments', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ content: content, user: "ME" })
-                });
-                const data = await response.json();
-                
-                if(data.status === "success") {
-                    addCommentUI(content);
-                    input.value = '';
-                }
-            } catch(e) { alert("연결 실패"); }
+            addCommentUI(content);
+            input.value = '';
+            toggleBtn();
         }
 
         function addCommentUI(content) {
             const list = document.getElementById('commentList');
             const html = `
-                <div style="display:flex; margin-bottom:15px; animation: fadeIn 0.3s;">
-                    <div class="circle-icon" style="width:30px; height:30px; font-size:10px; flex-shrink:0;">ME</div>
-                    <div style="margin-left:10px;">
-                        <div style="font-size:13px; font-weight:700;">나</div>
-                        <div style="font-size:14px; margin-top:2px;">${content}</div>
-                        <div style="font-size:11px; color:#aaa; margin-top:4px;">방금 전</div>
+                <div class="comment-item" style="animation: fadeIn 0.4s ease-out;">
+                    <div class="circle-icon" style="width:32px; height:32px; font-size:10px; background:#12d3cf; color:white; flex-shrink:0;">ME</div>
+                    <div class="comment-body">
+                        <div class="comment-user">나</div>
+                        <div class="comment-text">${content}</div>
+                        <div class="comment-footer">방금 전 · <i class="fa-regular fa-heart"></i> 0</div>
                     </div>
                 </div>
             `;
-            list.insertAdjacentHTML('afterbegin', html);
+            // 새 댓글을 리스트의 맨 위에 추가하려면 afterbegin, 
+            // 이미지처럼 기존 댓글 아래에 추가하려면 beforeend를 사용하세요.
+            // 여기서는 이미지 순서에 맞춰 하단에 추가(beforeend)하도록 설정했습니다.
+            list.insertAdjacentHTML('beforeend', html);
         }
     </script>
 </body>
