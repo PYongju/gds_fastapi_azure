@@ -196,10 +196,38 @@
         }
 
         // 새 게시글 등록
-        function submitNewPost() {
+        async function submitNewPost() {
             const input = document.getElementById('mainPostInput');
             const content = input.value.trim();
             if (!content) return;
+
+            try {
+                // FastAPI 서버로 데이터 전송
+                const response = await fetch("/comments", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        content: content,
+                        user: "나",
+                        post_id: null  // 게시글이므로 post_id는 비워둠
+                    })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    // result.post에 서버가 생성한 ID와 데이터가 들어있음
+                    renderPost(result.post); 
+                    
+                    input.value = '';
+                    checkPostLength();
+                    // 통계 숫자 증가
+                    const totalPostsEl = document.getElementById('totalPosts');
+                    totalPostsEl.innerText = parseInt(totalPostsEl.innerText) + 1;
+                }
+            } catch (error) {
+                console.error("데이터 저장 실패:", error);
+                alert("DB 연결에 문제가 발생했습니다.");
+            }
 
             const feed = document.getElementById('feedContent');
             const currentId = postIdx++;
