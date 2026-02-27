@@ -4,3 +4,4 @@ gunicorn
 sqlalchemy
 pyodbc
 python-dotenv
+jinja2
