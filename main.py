@@ -1,6 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from pydantic import BaseModel
+
+# UI에서 보내는 데이터 구조와 똑같이 만듭니다.
+class PostData(BaseModel):
+    content: str
+    author: str = "익명"  # 기본값 설정 가능
+    nudge_level: str = "safe"
+    probability: float = 0.0
+
 app = FastAPI()
 
 # CORS 설정
@@ -12,10 +21,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/test-data")
-async def recive_data(data:dict):
-    print(f"받은 데이터: {data}")
-    return {"status": "success", "received": data}
+@app.post("/posts")
+async def create_post(data: PostData):
+    # ==========================================
+    # 여기가 터미널에 출력하는 부분입니다!
+    # ==========================================
+    print("\n" + "="*50)
+    print("📢 UI에서 새로운 댓글이 도착했습니다!")
+    print(f"📝 내용: {data.content}")
+    print(f"👤 작성자: {data.author}")
+    print(f"🚨 넛지 레벨: {data.nudge_level}")
+    print(f"📊 확률: {data.probability}")
+    print("="*50 + "\n")
+    
+    # 나중에 여기서 Azure SQL 저장 로직을 넣으면 됩니다.
+    return {"status": "success", "received_content": data.content}
 
 @app.get("/")
 def read_root():
