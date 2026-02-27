@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GDS 커뮤니티 시연</title>
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>GDS Interactive Community</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg: #f3f4f6;
+            --bg: #f0f2f5;
             --white: #ffffff;
             --primary: #1d9bf0;
             --border: #eff3f4;
@@ -20,233 +20,185 @@
             font-family: 'Pretendard', sans-serif;
             background-color: var(--bg);
             margin: 0;
-            color: var(--text-main);
-        }
-
-        /* 레이아웃 */
-        .app-container {
-            display: grid;
-            grid-template-columns: 240px 1fr 300px;
-            max-width: 1200px;
-            margin: 0 auto;
-            gap: 20px;
             padding: 20px;
-        }
-
-        /* 왼쪽 사이드바 (가짜 메뉴) */
-        .sidebar {
-            position: sticky;
-            top: 20px;
-            height: fit-content;
-        }
-        .nav-item {
-            padding: 12px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 99px;
-            transition: 0.2s;
-        }
-        .nav-item:hover { background: #e7e7e8; }
-        .nav-item i { margin-right: 15px; width: 25px; }
-        .active { color: var(--primary); }
-
-        /* 메인 피드 */
-        .main-feed {
-            background: var(--white);
-            border-radius: 12px;
-            min-height: 100vh;
-        }
-        .feed-header {
-            padding: 15px;
-            border-bottom: 1px solid var(--border);
-            font-size: 20px;
-            font-weight: 700;
-            position: sticky;
-            top: 0;
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(10px);
-            z-index: 10;
-        }
-
-        /* 글쓰기 영역 */
-        .composer {
-            padding: 15px;
-            border-bottom: 8px solid var(--bg);
             display: flex;
-            gap: 12px;
+            justify-content: center;
         }
-        .avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #ccc;
-            flex-shrink: 0;
+
+        .container { width: 100%; max-width: 600px; }
+
+        /* 게시글 작성창 */
+        .composer {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .composer-content { flex: 1; }
+
         textarea {
             width: 100%;
-            border: none;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
             resize: none;
-            font-size: 18px;
-            padding: 10px 0;
             outline: none;
             font-family: inherit;
+            box-sizing: border-box;
         }
-        .composer-tools {
+
+        .composer-footer {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 10px;
-            border-top: 1px solid var(--border);
+            justify-content: flex-end;
+            margin-top: 10px;
         }
-        .tool-icons { color: var(--primary); display: flex; gap: 15px; cursor: pointer; }
-        .post-btn {
+
+        .btn-main {
             background: var(--primary);
             color: white;
             border: none;
             padding: 10px 20px;
             border-radius: 99px;
-            font-weight: 700;
+            font-weight: 600;
             cursor: pointer;
+            transition: 0.2s;
         }
+
+        .btn-main:hover { opacity: 0.9; }
 
         /* 게시글 카드 */
         .post-card {
-            padding: 15px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            gap: 12px;
-            animation: fadeIn 0.3s ease-out;
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            animation: slideUp 0.3s ease-out;
         }
-        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
-        
-        .post-body { flex: 1; }
-        .post-info { display: flex; gap: 5px; margin-bottom: 5px; }
-        .post-user { font-weight: 700; }
-        .post-handle { color: var(--text-sub); }
-        .post-text { line-height: 1.5; margin-bottom: 10px; }
-        
-        .post-actions {
-            display: flex;
-            justify-content: space-between;
-            max-width: 400px;
-            color: var(--text-sub);
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .user-badge { width: 40px; height: 40px; border-radius: 50%; background: #e1e8ed; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #536471; }
+        .user-name { font-weight: 600; font-size: 15px; }
+
+        .post-content { font-size: 16px; line-height: 1.5; color: var(--text-main); margin-bottom: 15px; }
+
+        /* 댓글 영역 */
+        .comment-section {
+            border-top: 1px solid var(--border);
+            padding-top: 15px;
             margin-top: 10px;
         }
-        .action-item { cursor: pointer; transition: 0.2s; }
-        .action-item:hover { color: var(--primary); }
 
-        /* 오른쪽 트렌드 바 */
-        .trends {
-            position: sticky;
-            top: 20px;
-            height: fit-content;
-        }
-        .trend-card {
-            background: var(--white);
+        .comment-list { margin-bottom: 15px; }
+        .comment-item {
+            background: #f7f9f9;
             border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
-        .trend-item { margin-bottom: 15px; cursor: pointer; }
-        .trend-cat { font-size: 12px; color: var(--text-sub); }
-        .trend-name { font-weight: 700; margin: 2px 0; }
+        .comment-user { font-weight: 600; margin-right: 5px; color: var(--primary); }
+
+        .comment-input-group { display: flex; gap: 8px; }
+        .comment-input {
+            flex: 1;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 14px;
+            outline: none;
+        }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="sidebar">
-        <div class="nav-item active"><i class="fa-solid fa-house"></i> 홈</div>
-        <div class="nav-item"><i class="fa-solid fa-hashtag"></i> 탐색하기</div>
-        <div class="nav-item"><i class="fa-solid fa-bell"></i> 알림</div>
-        <div class="nav-item"><i class="fa-solid fa-envelope"></i> 쪽지</div>
-        <div class="nav-item"><i class="fa-solid fa-user"></i> 프로필</div>
-    </div>
+<div class="container">
+    <h2 style="text-align: center; margin-bottom: 30px;">🚀 GDS 시연 커뮤니티</h2>
 
-    <div class="main-feed">
-        <div class="feed-header">홈</div>
-        
-        <div class="composer">
-            <div class="avatar" style="background: #1d9bf0; display:flex; align-items:center; justify-content:center; color:white;">ME</div>
-            <div class="composer-content">
-                <textarea id="postInput" placeholder="무슨 일이 일어나고 있나요?" rows="3"></textarea>
-                <div class="composer-tools">
-                    <div class="tool-icons">
-                        <i class="fa-regular fa-image"></i>
-                        <i class="fa-solid fa-list-ul"></i>
-                        <i class="fa-regular fa-face-smile"></i>
-                        <i class="fa-regular fa-calendar-check"></i>
-                    </div>
-                    <button class="post-btn" onclick="submitPost()">게시하기</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="feedList">
-            </div>
-    </div>
-
-    <div class="trends">
-        <div class="trend-card">
-            <h3 style="margin-top:0">나를 위한 트렌드</h3>
-            <div class="trend-item">
-                <div class="trend-cat">대한민국에서 트렌드 중</div>
-                <div class="trend-name">#FastAPI_시연</div>
-                <div class="trend-cat">1,240 게시물</div>
-            </div>
-            <div class="trend-item">
-                <div class="trend-cat">기술 · 실시간 트렌드</div>
-                <div class="trend-name">GDS 프로젝트</div>
-                <div class="trend-cat">854 게시물</div>
-            </div>
+    <div class="composer">
+        <textarea id="postInput" placeholder="새로운 소식을 공유해보세요!" rows="3"></textarea>
+        <div class="composer-footer">
+            <button class="btn-main" onclick="createPost()">게시하기</button>
         </div>
     </div>
+
+    <div id="feed"></div>
 </div>
 
 <script>
-    async function submitPost() {
+    // 게시글 생성 함수
+    async function createPost() {
         const input = document.getElementById('postInput');
-        const text = input.value.trim();
-        if(!text) return;
+        const content = input.value.trim();
+        if (!content) return alert("내용을 입력하세요!");
 
         try {
             const response = await fetch('/comments', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    content: text,
-                    user: "GDS_Demon"
+                    content: content,
+                    user: "GDS_User"
                 })
             });
-            const resData = await response.json();
-            addPostUI(resData.post || {content: text, user: "GDS_Demon", id: Date.now()});
-            input.value = '';
-        } catch(e) { alert("서버 연결 실패!"); }
+
+            const data = await response.json();
+            if (data.status === "success") {
+                renderPost(data.post);
+                input.value = '';
+            }
+        } catch (e) {
+            alert("서버 전송 실패!");
+        }
     }
 
-    function addPostUI(post) {
-        const feed = document.getElementById('feedList');
-        const postHtml = `
-            <div class="post-card" id="post-${post.id}">
-                <div class="avatar" style="background:#536471"></div>
-                <div class="post-body">
-                    <div class="post-info">
-                        <span class="post-user">${post.user}</span>
-                        <span class="post-handle">@demo_user · 방금 전</span>
+    // 게시글을 화면에 그리는 함수
+    function renderPost(post) {
+        const feed = document.getElementById('feed');
+        const postElement = document.createElement('div');
+        postElement.className = 'post-card';
+        postElement.id = `post-${post.id}`;
+        
+        postElement.innerHTML = `
+            <div class="post-header">
+                <div class="user-badge">${post.user[0]}</div>
+                <div class="user-name">${post.user}</div>
+            </div>
+            <div class="post-content">${post.content}</div>
+            
+            <div class="comment-section">
+                <div class="comment-list" id="comments-${post.id}">
                     </div>
-                    <div class="post-text">${post.content}</div>
-                    <div class="post-actions">
-                        <div class="action-item"><i class="fa-regular fa-comment"></i> 0</div>
-                        <div class="action-item"><i class="fa-solid fa-retweet"></i> 0</div>
-                        <div class="action-item" onclick="this.style.color='#f91880'"><i class="fa-regular fa-heart"></i> 0</div>
-                        <div class="action-item"><i class="fa-solid fa-share-nodes"></i></div>
-                    </div>
+                <div class="comment-input-group">
+                    <input type="text" class="comment-input" id="input-${post.id}" placeholder="댓글을 입력하세요...">
+                    <button class="btn-main" style="padding: 5px 15px; font-size: 13px;" onclick="addComment('${post.id}')">등록</button>
                 </div>
             </div>
         `;
-        feed.insertAdjacentHTML('afterbegin', postHtml);
+        
+        feed.prepend(postElement);
+    }
+
+    // 댓글 추가 함수 (시연용 로컬 업데이트)
+    function addComment(postId) {
+        const input = document.getElementById(`input-${postId}`);
+        const commentList = document.getElementById(`comments-${postId}`);
+        const text = input.value.trim();
+
+        if (!text) return;
+
+        const commentItem = document.createElement('div');
+        commentItem.className = 'comment-item';
+        commentItem.innerHTML = `<span class="comment-user">익명:</span> ${text}`;
+        
+        commentList.appendChild(commentItem);
+        input.value = '';
     }
 </script>
 
