@@ -8,199 +8,111 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg: #f0f2f5;
-            --white: #ffffff;
-            --primary: #1d9bf0;
-            --border: #eff3f4;
-            --text-main: #0f1419;
-            --text-sub: #536471;
+            --bg: #f0f2f5; --white: #ffffff; --primary: #1d9bf0;
+            --border: #eff3f4; --text-main: #0f1419; --text-sub: #536471;
         }
-
-        body {
-            font-family: 'Pretendard', sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-
+        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; }
         .container { width: 100%; max-width: 600px; }
-
-        /* 게시글 작성창 */
-        .composer {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        textarea {
-            width: 100%;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 16px;
-            resize: none;
-            outline: none;
-            font-family: inherit;
-            box-sizing: border-box;
-        }
-
-        .composer-footer {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 10px;
-        }
-
-        .btn-main {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 99px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .btn-main:hover { opacity: 0.9; }
-
-        /* 게시글 카드 */
-        .post-card {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            animation: slideUp 0.3s ease-out;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        .composer { background: var(--white); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        textarea { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-size: 16px; resize: none; outline: none; font-family: inherit; box-sizing: border-box; }
+        .composer-footer { display: flex; justify-content: flex-end; margin-top: 10px; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 99px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .post-card { background: var(--white); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
         .user-badge { width: 40px; height: 40px; border-radius: 50%; background: #e1e8ed; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #536471; }
         .user-name { font-weight: 600; font-size: 15px; }
-
         .post-content { font-size: 16px; line-height: 1.5; color: var(--text-main); margin-bottom: 15px; }
-
-        /* 댓글 영역 */
-        .comment-section {
-            border-top: 1px solid var(--border);
-            padding-top: 15px;
-            margin-top: 10px;
-        }
-
-        .comment-list { margin-bottom: 15px; }
-        .comment-item {
-            background: #f7f9f9;
-            border-radius: 12px;
-            padding: 10px 15px;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
+        .comment-section { border-top: 1px solid var(--border); padding-top: 15px; margin-top: 10px; }
+        .comment-item { background: #f7f9f9; border-radius: 12px; padding: 10px 15px; margin-bottom: 8px; font-size: 14px; }
         .comment-user { font-weight: 600; margin-right: 5px; color: var(--primary); }
-
         .comment-input-group { display: flex; gap: 8px; }
-        .comment-input {
-            flex: 1;
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 8px 15px;
-            font-size: 14px;
-            outline: none;
-        }
+        .comment-input { flex: 1; border: 1px solid var(--border); border-radius: 20px; padding: 8px 15px; font-size: 14px; outline: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2 style="text-align: center; margin-bottom: 30px;">🚀 GDS 시연 커뮤니티</h2>
-
     <div class="composer">
         <textarea id="postInput" placeholder="새로운 소식을 공유해보세요!" rows="3"></textarea>
         <div class="composer-footer">
             <button class="btn-main" onclick="createPost()">게시하기</button>
         </div>
     </div>
-
     <div id="feed"></div>
 </div>
 
 <script>
-    // 게시글 생성 함수
-    async function createPost() {
-        const input = document.getElementById('postInput');
-        const content = input.value.trim();
-        if (!content) return alert("내용을 입력하세요!");
-
+    // 서버 통신 공통 함수
+    async function sendData(content, postId = null) {
         try {
             const response = await fetch('/comments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     content: content,
-                    user: "GDS_User"
+                    user: "GDS_User",
+                    post_id: postId
                 })
             });
-
-            const data = await response.json();
-            if (data.status === "success") {
-                renderPost(data.post);
-                input.value = '';
-            }
+            return await response.json();
         } catch (e) {
             alert("서버 전송 실패!");
         }
     }
 
-    // 게시글을 화면에 그리는 함수
+    // 게시글 작성
+    async function createPost() {
+        const input = document.getElementById('postInput');
+        const content = input.value.trim();
+        if (!content) return;
+
+        const data = await sendData(content);
+        if (data && data.status === "success") {
+            renderPost(data.post);
+            input.value = '';
+        }
+    }
+
+    // 댓글 등록
+    async function addComment(postId) {
+        const input = document.getElementById(`input-${postId}`);
+        const text = input.value.trim();
+        if (!text) return;
+
+        const data = await sendData(text, postId);
+        if (data && data.status === "success") {
+            const commentList = document.getElementById(`comments-${postId}`);
+            const commentItem = document.createElement('div');
+            commentItem.className = 'comment-item';
+            commentItem.innerHTML = `<span class="comment-user">익명:</span> ${text}`;
+            commentList.appendChild(commentItem);
+            input.value = '';
+        }
+    }
+
     function renderPost(post) {
         const feed = document.getElementById('feed');
         const postElement = document.createElement('div');
         postElement.className = 'post-card';
         postElement.id = `post-${post.id}`;
-        
         postElement.innerHTML = `
             <div class="post-header">
                 <div class="user-badge">${post.user[0]}</div>
                 <div class="user-name">${post.user}</div>
             </div>
             <div class="post-content">${post.content}</div>
-            
             <div class="comment-section">
-                <div class="comment-list" id="comments-${post.id}">
-                    </div>
+                <div class="comment-list" id="comments-${post.id}"></div>
                 <div class="comment-input-group">
-                    <input type="text" class="comment-input" id="input-${post.id}" placeholder="댓글을 입력하세요...">
-                    <button class="btn-main" style="padding: 5px 15px; font-size: 13px;" onclick="addComment('${post.id}')">등록</button>
+                    <input type="text" class="comment-input" id="input-${post.id}" placeholder="댓글 입력...">
+                    <button class="btn-main" style="padding: 5px 15px; font-size: 12px;" onclick="addComment('${post.id}')">등록</button>
                 </div>
             </div>
         `;
-        
         feed.prepend(postElement);
     }
-
-    // 댓글 추가 함수 (시연용 로컬 업데이트)
-    function addComment(postId) {
-        const input = document.getElementById(`input-${postId}`);
-        const commentList = document.getElementById(`comments-${postId}`);
-        const text = input.value.trim();
-
-        if (!text) return;
-
-        const commentItem = document.createElement('div');
-        commentItem.className = 'comment-item';
-        commentItem.innerHTML = `<span class="comment-user">익명:</span> ${text}`;
-        
-        commentList.appendChild(commentItem);
-        input.value = '';
-    }
 </script>
-
 </body>
 </html>
