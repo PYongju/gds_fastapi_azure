@@ -1,28 +1,27 @@
-from sqlalchemy import create_url
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
 import urllib
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+import os
+from dotenv import load_dotenv
 
-# 1. 연결 정보 설정 (Azure Portal의 '연결 문자열'에서 복사 가능)
-server = 'your-server-name.database.windows.net'
-database = 'your-db-name'
-username = 'your-username'
-password = 'your-password'
-driver = '{ODBC Driver 18 for SQL Server}' # 설치된 드라이버 버전에 맞춰 수정
+load_dotenv()
 
-# 2. ODBC 연결 문자열 생성
-params = urllib.parse.quote_plus(
-    f"DRIVER={driver};SERVER={server};DATABASE={database};"
-    f"UID={username};PWD={password};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
-)
-conn_str = f"mssql+pyodbc:///?odbc_connect={params}"
+# 1. create_url 대신 create_engine을 사용합니다.
+# 2. 연결 문자열 (본인의 설정에 맞게 수정되어 있는지 확인하세요)
+# 예: DRIVER={ODBC Driver 18 for SQL Server};SERVER=...
+connection_string = os.getenv("DATABASE_URL") 
 
-# 3. SQLAlchemy 엔진 생성
-engine = create_engine(conn_str)
+# 직접 입력을 선호하신다면 아래 형식을 따르세요
+# params = urllib.parse.quote_plus("DRIVER={ODBC Driver 18 for SQL Server};SERVER=your-server.database.windows.net;DATABASE=your-db;UID=your-user;PWD=your-password")
+# engine = create_engine(f"mssql+pyodbc:///?odbc_connect={params}")
+
+# 테스트용 (연결 문자열이 준비되지 않았다면 임시로 이렇게 두세요)
+engine = create_engine("sqlite:///./test.db") # Azure SQL 연결 전 테스트용
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-# DB 세션 의존성
 def get_db():
     db = SessionLocal()
     try:
