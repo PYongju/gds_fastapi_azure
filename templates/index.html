@@ -1,26 +1,206 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <title>FastAPI 시연 페이지</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GDS 커뮤니티 시연</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/your-kit-code.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --accent-color: #3b82f6;
+            --text-primary: #1c1e21;
+            --text-secondary: #65676b;
+            --border-color: #dddfe2;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        /* 입력창 스타일 */
+        .composer-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .composer-top {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #3b82f6;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        textarea {
+            flex: 1;
+            border: none;
+            resize: none;
+            font-size: 16px;
+            outline: none;
+            min-height: 80px;
+            padding-top: 8px;
+        }
+
+        .composer-bottom {
+            border-top: 1px solid var(--border-color);
+            padding-top: 12px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            filter: brightness(0.9);
+        }
+
+        /* 피드 스타일 */
+        .post-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            margin-bottom: 12px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .user-name { font-weight: 600; }
+        .post-time { font-size: 12px; color: var(--text-secondary); }
+
+        .post-content {
+            font-size: 15px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .status-msg {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>댓글 작성 시연 (FastAPI 내부 페이지)</h1>
-    <textarea id="commentInput" placeholder="여기에 댓글을 입력하세요..."></textarea>
-    <button onclick="sendComment()">전송</button>
 
-    <div id="result"></div>
+<div class="container">
+    <h2>GDS 커뮤니티 시연</h2>
 
-    <script>
-        async function sendComment() {
-            const text = document.getElementById('commentInput').value;
+    <div class="composer-card">
+        <div class="composer-top">
+            <div class="avatar">ME</div>
+            <textarea id="commentInput" placeholder="무슨 생각을 하고 계신가요?"></textarea>
+        </div>
+        <div class="composer-bottom">
+            <button onclick="sendComment()">게시</button>
+        </div>
+    </div>
+
+    <div id="postsContainer">
+        </div>
+    <div id="status" class="status-msg"></div>
+</div>
+
+<script>
+    async function sendComment() {
+        const input = document.getElementById('commentInput');
+        const text = input.value.trim();
+        const status = document.getElementById('status');
+
+        if (!text) {
+            alert("내용을 입력해주세요!");
+            return;
+        }
+
+        try {
             const response = await fetch('/comments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ content: text, user: "Demonstration" })
             });
-            const data = await response.json();
-            document.getElementById('result').innerText = "서버 응답: " + JSON.stringify(data);
+
+            if (response.ok) {
+                const data = await response.json();
+                addPostToUI(text); // 화면에 즉시 추가
+                input.value = ''; // 입력창 비우기
+                status.innerText = "서버 전송 완료!";
+                setTimeout(() => status.innerText = "", 2000);
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("서버 통신 실패!");
         }
-    </script>
+    }
+
+    function addPostToUI(content) {
+        const container = document.getElementById('postsContainer');
+        const now = new String(new Date().toLocaleTimeString());
+        
+        const postHTML = `
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="avatar" style="background:#888; width:32px; height:32px; font-size:12px;">D</div>
+                    <div>
+                        <div class="user-name">Demonstration</div>
+                        <div class="post-time">방금 전 (${now})</div>
+                    </div>
+                </div>
+                <div class="post-content">${content}</div>
+            </div>
+        `;
+        
+        container.insertAdjacentHTML('afterbegin', postHTML);
+    }
+</script>
+
 </body>
 </html>
