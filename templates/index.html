@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FastAPI 시연 페이지</title>
+</head>
+<body>
+    <h1>댓글 작성 시연 (FastAPI 내부 페이지)</h1>
+    <textarea id="commentInput" placeholder="여기에 댓글을 입력하세요..."></textarea>
+    <button onclick="sendComment()">전송</button>
+
+    <div id="result"></div>
+
+    <script>
+        async function sendComment() {
+            const text = document.getElementById('commentInput').value;
+            const response = await fetch('/comments', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: text, user: "Demonstration" })
+            });
+            const data = await response.json();
+            document.getElementById('result').innerText = "서버 응답: " + JSON.stringify(data);
+        }
+    </script>
+</body>
+</html>
