@@ -7,8 +7,8 @@ from typing import List, Optional
 from datetime import datetime
 
 # 우리가 만든 파일들 불러오기
-from .database import get_db, engine
-from . import models
+from database import get_db, engine
+import models
 
 # 서버 시작 시 테이블 생성 (이미 있다면 무시됨)
 # models.Base.metadata.create_all(bind=engine) 
