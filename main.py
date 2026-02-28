@@ -37,7 +37,7 @@ async def get_posts(db: Session = Depends(get_db)):
 async def handle_request(item: ContentRequest, db: Session = Depends(get_db)):
     # [중요] DBML 제약조건 때문에 users 테이블에 id=1인 유저가 반드시 있어야 합니다.
     # 만약 유저가 없다면 아래 로직은 에러가 납니다.
-    test_user_id = 1 
+    test_user_id = 4 
 
     # 1. 댓글 작성 로직 (post_id가 있을 때)
     if item.post_id:
