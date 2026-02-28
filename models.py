@@ -20,7 +20,7 @@ class User(Base):
 class Post(Base):
     __tablename__ = "posts"
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String(255))
+    title = NVARCHAR(String(255))
     body = Column(Text) 
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     status = Column(String(50))
