@@ -1,7 +1,7 @@
-fastapi==0.109.2
-uvicorn==0.27.1
-gunicorn==21.2.0
-sqlalchemy==2.0.27
-pyodbc==5.1.0
-python-dotenv==1.0.1
-jinja2==3.1.3
+fastapi
+uvicorn
+gunicorn
+sqlalchemy
+pyodbc
+python-dotenv
+jinja2
