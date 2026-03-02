@@ -207,7 +207,7 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 content: content,
-                user: "나"        // 게시글일 때는 null을 보냅니다.
+            user: "나"        // 게시글일 때는 null을 보냅니다.
                 })
             });
 
@@ -232,31 +232,37 @@
     }
 
     // 게시글을 화면에 렌더링하는 함수
-    function renderPostToFeed(post) {
-        const feed = document.getElementById('feedContent');
-        
-        // 서버 응답 구조(main.py)에 맞게 post.body를 사용합니다.
-        const contentText = post.body || post.content || "내용 없음"; 
+    // 게시글을 화면에 렌더링하는 함수 (수정됨)
+function renderPostToFeed(post) {
+    const feed = document.getElementById('feedContent');
+    const contentText = post.body || post.content || "내용 없음"; 
+    const postId = post.id; // DB에서 받아온 실제 ID (1, 2, 3...)
 
-        const newPostHtml = `
-            <div class="post-card" id="post-${post.id}">
-                <div class="post-card-header">
-                    <div class="nav-icon" style="margin:0; width:40px; height:40px; background:var(--primary); color:white;">ME</div>
-                    <div style="margin-left:12px;">
-                        <div style="font-weight:700; font-size:15px;">나</div>
-                        <div class="post-time">방금 전</div>
-                    </div>
+    const newPostHtml = `
+        <div class="post-card" id="post-${postId}">
+            <div class="post-card-header">
+                <div class="nav-icon" style="margin:0; width:40px; height:40px; background:var(--primary); color:white;">ME</div>
+                <div style="margin-left:12px;">
+                    <div style="font-weight:700; font-size:15px;">나</div>
+                    <div class="post-time">방금 전</div>
                 </div>
-                <div class="post-body">${contentText}</div> <div class="post-actions">
-                    <span><i class="fa-regular fa-heart"></i> 0</span>
-                    <span><i class="fa-regular fa-comment"></i> 0</span>
-                </div>
-                <div class="comment-list" id="comment-list-${post.id}"></div>
-                ...
             </div>
-        `;
-        feed.insertAdjacentHTML('afterbegin', newPostHtml);
-    }
+            <div class="post-body">${contentText}</div> 
+            <div class="post-actions">
+                <span><i class="fa-regular fa-heart"></i> 0</span>
+                <span><i class="fa-regular fa-comment"></i> 0</span>
+            </div>
+            <div class="comment-list" id="comment-list-${postId}"></div>
+            <div class="comment-input-wrap">
+                <textarea id="comment-input-${postId}" placeholder="따뜻한 댓글을 남겨주세요..." oninput="checkCommentLength(${postId})"></textarea>
+                <div class="comment-btn-row">
+                    <button id="comment-btn-${postId}" class="btn-comment-submit" onclick="submitComment(${postId})">등록</button>
+                </div>
+            </div>
+        </div>
+    `;
+    feed.insertAdjacentHTML('afterbegin', newPostHtml);
+}
 
     // 3. 댓글 버튼 활성화 로직
     function checkCommentLength(id) {
