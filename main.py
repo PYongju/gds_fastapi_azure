@@ -37,12 +37,26 @@ class ContentRequest(BaseModel):
 async def read_item(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+
 @app.get("/posts")
 async def get_posts(db: Session = Depends(get_db)):
-    # DB에서 최신순으로 게시글을 가져오고, 연관된 댓글도 함께 가져옵니다.
-    # models.py에 relationship을 설정했기 때문에 자동으로 불러올 수 있습니다.
+    # 1. 게시글을 가져올 때 유저(author) 정보도 같이 로드합니다.
     posts = db.query(models.Post).order_by(models.Post.id.desc()).all()
-    return posts
+    
+    # 2. 각 post 객체 안에 author.username이 들어있으므로, 
+    # FastAPI가 이를 JSON으로 변환할 때 포함하도록 합니다.
+    result = []
+    for post in posts:
+        post_data = {
+            "id": post.id,
+            "title": post.title,
+            "body": post.body,
+            "created_at": post.created_at,
+            "username": post.author.username if post.author else "익명" # ⭐️ 여기서 이름을 꺼내줍니다!
+        }
+        result.append(post_data)
+        
+    return result
 
 # 게시글 전용 Pydantic 모델
 class PostCreate(BaseModel):
