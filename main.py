@@ -86,7 +86,7 @@ async def create_comment(item: CommentCreate, db: Session = Depends(get_db)):
     test_user_id = 6
     
     new_comment = models.Comment(
-        post_id=4,
+        post_id=item.post_id,
         user_id=test_user_id,
         content=item.content,
         toxicity_score=0.0,
