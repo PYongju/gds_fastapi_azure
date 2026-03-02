@@ -7,8 +7,8 @@ from database import Base
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(NVARCHAR(255)) # ⭐️ String 대신 NVARCHAR
-    role = Column(NVARCHAR(50)) 
+    username = Column(NVARCHAR) # ⭐️ String 대신 NVARCHAR
+    role = Column(NVARCHAR) 
     created_at = Column(DateTime, server_default=func.now())
 
     posts = relationship("Post", back_populates="author")
@@ -18,10 +18,10 @@ class User(Base):
 class Post(Base):
     __tablename__ = "posts"
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(NVARCHAR(255)) # ⭐️ NVARCHAR로 변경 (collation 필요 없음)
-    body = Column(NVARCHAR(max))  # ⭐️ Text 대신 NVARCHAR(max)
+    title = Column(NVARCHAR) # ⭐️ NVARCHAR로 변경 (collation 필요 없음)
+    body = Column(NVARCHAR)  # ⭐️ Text 대신 NVARCHAR(max)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    status = Column(NVARCHAR(50))
+    status = Column(NVARCHAR)
     created_at = Column(DateTime, server_default=func.now())
 
     author = relationship("User", back_populates="posts")
@@ -33,11 +33,11 @@ class Comment(Base):
     id = Column(Integer, primary_key=True, index=True)
     post_id = Column(Integer, ForeignKey("posts.id"), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    content = Column(NVARCHAR(max)) # ⭐️ 한글 댓글을 위해 NVARCHAR(max)
-    image_url = Column(NVARCHAR(500))
+    content = Column(NVARCHAR) # ⭐️ 한글 댓글을 위해 NVARCHAR(max)
+    image_url = Column(NVARCHAR)
     toxicity_score = Column(Float)
     created_at = Column(DateTime, server_default=func.now())
-    label = Column(NVARCHAR(20))
+    label = Column(NVARCHAR)
 
     post = relationship("Post", back_populates="comments")
     author = relationship("User", back_populates="comments")
@@ -54,6 +54,6 @@ class AdminLog(Base):
 # 5. 모델 관리 테이블
 class MLModel(Base):
     __tablename__ = "ml_model"
-    model_version = Column(NVARCHAR(50), primary_key=True) 
+    model_version = Column(NVARCHAR, primary_key=True) 
     inference_time = Column(Float)
     created_at = Column(DateTime, server_default=func.now())

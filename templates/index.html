@@ -249,7 +249,7 @@
 
     // 게시글을 화면에 렌더링하는 함수
     // 게시글을 화면에 렌더링하는 함수 (수정됨)
-function renderPostToFeed(post) {
+async function renderPostToFeed(post) {
     const feed = document.getElementById('feedContent');
     const contentText = post.body || post.content || "내용 없음"; 
     const postId = post.id; // DB에서 받아온 실제 ID (1, 2, 3...)
