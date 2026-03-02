@@ -276,33 +276,35 @@ async function submitComment(postId) {
     if (!text) return;
 
     try {
-        // [API 호출] 댓글 저장
         const response = await fetch("/comments", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                content: text,    // 댓글 내용
-                user: "나",       // 작성자 이름
-                post_id: postId   // ⭐️ 어떤 게시글에 달린 댓글인지 전달
+                content: text,
+                user: "나",
+                post_id: postId
             })
         });
 
         if (response.ok) {
             const result = await response.json();
-            // result.comment (서버에서 반환한 값)를 사용하여 화면에 추가
+            // 서버가 리턴한 "comment" 객체 사용
+            const savedComment = result.comment; 
+            
             const list = document.getElementById(`comment-list-${postId}`);
             const commentHtml = `
-                <div class="comment-item">
+                <div class="comment-item" id="comment-${savedComment.id}">
                     <div class="nav-icon" style="width:28px; height:28px; font-size:9px; background:var(--primary); color:white; flex-shrink:0;">ME</div>
                     <div class="comment-body">
                         <div class="comment-content">
                             <div class="comment-user">나</div>
-                            <div class="comment-text">${text}</div>
+                            <div class="comment-text">${savedComment.content}</div>
                         </div>
                     </div>
                 </div>
             `;
             list.insertAdjacentHTML('beforeend', commentHtml);
+            
             input.value = '';
             checkCommentLength(postId);
         } else {

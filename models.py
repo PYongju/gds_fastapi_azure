@@ -1,16 +1,14 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Text
+from sqlalchemy import Column, Integer, Float, DateTime, ForeignKey, Text, NVARCHAR  # ⭐️ NVARCHAR 추가
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func # 서버 시간 사용을 위해 추가
+from sqlalchemy.sql import func
 from database import Base
 
 # 1. 유저 테이블
 class User(Base):
     __tablename__ = "users"
-    # primary_key=True 설정이 MSSQL의 IDENTITY와 자동 연동됩니다.
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(255)) # nvarchar(255) 대응
-    role = Column(String(50))     # nvarchar(50) 대응
-    # default 대신 server_default를 쓰면 DB가 직접 getdate()를 실행합니다.
+    username = Column(NVARCHAR(255)) # ⭐️ String 대신 NVARCHAR
+    role = Column(NVARCHAR(50)) 
     created_at = Column(DateTime, server_default=func.now())
 
     posts = relationship("Post", back_populates="author")
@@ -20,10 +18,10 @@ class User(Base):
 class Post(Base):
     __tablename__ = "posts"
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String(255, collation="Korean_Wansung_CI_AS"))
-    body = Column(Text) 
+    title = Column(NVARCHAR(255)) # ⭐️ NVARCHAR로 변경 (collation 필요 없음)
+    body = Column(NVARCHAR(max))  # ⭐️ Text 대신 NVARCHAR(max)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    status = Column(String(50))
+    status = Column(NVARCHAR(50))
     created_at = Column(DateTime, server_default=func.now())
 
     author = relationship("User", back_populates="posts")
@@ -35,11 +33,11 @@ class Comment(Base):
     id = Column(Integer, primary_key=True, index=True)
     post_id = Column(Integer, ForeignKey("posts.id"), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    content = Column(Text) # 긴 텍스트를 위해 Text 혹은 String 명시
-    image_url = Column(String(500))
+    content = Column(NVARCHAR(max)) # ⭐️ 한글 댓글을 위해 NVARCHAR(max)
+    image_url = Column(NVARCHAR(500))
     toxicity_score = Column(Float)
     created_at = Column(DateTime, server_default=func.now())
-    label = Column(String(20))
+    label = Column(NVARCHAR(20))
 
     post = relationship("Post", back_populates="comments")
     author = relationship("User", back_populates="comments")
@@ -56,7 +54,6 @@ class AdminLog(Base):
 # 5. 모델 관리 테이블
 class MLModel(Base):
     __tablename__ = "ml_model"
-    model_version = Column(String(50), primary_key=True) 
+    model_version = Column(NVARCHAR(50), primary_key=True) 
     inference_time = Column(Float)
-    # 모델 등록 시간도 있으면 관리하기 편합니다.
     created_at = Column(DateTime, server_default=func.now())
