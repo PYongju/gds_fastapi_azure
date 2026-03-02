@@ -190,21 +190,31 @@
             loadFeed();
         });
 
-        // 2. 서버에서 전체 게시글 불러오기
+        // 2. 서버에서 게시글 목록을 가져와서 화면에 뿌려주는 함수
         async function loadFeed() {
             try {
                 const response = await fetch("/posts");
                 if (response.ok) {
-                    const posts = await response.json();
+                    let posts = await response.json();
                     const feed = document.getElementById('feedContent');
                     
-                    // ⭐️ 중요: 기존 하드코딩된 샘플 데이터를 싹 지우고 서버 데이터로 채웁니다.
+                    // 기존 샘플 데이터 삭제
                     feed.innerHTML = ''; 
 
+                    // ⭐️ 추가 디테일: 아티스트(celebrity) 글을 무조건 상단으로 정렬
+                    // role이 celebrity인 글이 앞에 오도록 배열을 재정렬합니다.
+                    posts.sort((a, b) => {
+                        if (a.role === 'celebrity' && b.role !== 'celebrity') return -1;
+                        if (a.role !== 'celebrity' && b.role === 'celebrity') return 1;
+                        return 0; // 둘 다 아티스트거나 둘 다 일반인이면 순서 유지
+                    });
+
+                    // 정렬된 순서대로 화면에 그리기
                     posts.forEach(post => {
                         renderPostToFeed(post);
                     });
 
+                    // 통계 숫자 업데이트
                     const totalPostsEl = document.getElementById('totalPosts');
                     if (totalPostsEl) totalPostsEl.innerText = posts.length;
                 }
