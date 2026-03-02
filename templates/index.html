@@ -89,17 +89,27 @@
             width: 100%; background: transparent; border: none; outline: none; 
             resize: none; font-size: 14px; font-family: inherit; min-height: 40px;
         }
-        .comment-btn-row { display: flex; justify-content: flex-end; margin-top: 8px; }
+        .comment-btn-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
         .btn-comment-submit {
             background: none; border: none; color: #adb5bd; font-weight: 700; 
             font-size: 14px; cursor: pointer; transition: 0.2s; padding: 5px 10px;
         }
         .btn-comment-submit.active { color: var(--primary); }
 
-        .comment-item { display: flex; margin-top: 15px; animation: fadeIn 0.3s; }
+        .comment-item { display: flex; margin-top: 15px; animation: fadeIn 0.3s; align-items: flex-start; }
         .comment-content { margin-left: 10px; background: #f8f9fa; padding: 8px 12px; border-radius: 10px; flex: 1; }
         .comment-user { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
-        .comment-text { font-size: 14px; }
+        .comment-text { font-size: 14px; line-height: 1.4; }
+        .comment-attached-img { width: 100%; max-width: 250px; border-radius: 8px; margin-top: 8px; display: block; border: 1px solid #eee; }
+
+        /* 미리보기 스타일 */
+        .preview-container { position: relative; display: inline-block; }
+        .preview-container img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid #ddd; }
+        .preview-container .cancel-btn { 
+            position: absolute; top: -5px; right: -5px; background: #333; color: white; 
+            border-radius: 50%; width: 18px; height: 18px; font-size: 10px; 
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
 
         /* 우측 위젯 */
         .right-sidebar { width: 280px; }
@@ -140,44 +150,25 @@
                     </div>
                     <textarea id="mainPostInput" placeholder="오늘 어떤 일이 있었나요? 팬들과 공유해보세요!" oninput="checkPostLength()"></textarea>
                     <div class="write-footer">
-                        <div class="write-tools"><i class="fa-regular fa-image"></i><i class="fa-regular fa-face-smile"></i></div>
+                        <div class="write-tools">
+                            <i class="fa-regular fa-image" style="cursor:not-allowed; opacity:0.5;"></i> <i class="fa-regular fa-face-smile"></i>
+                        </div>
                         <button id="mainPostBtn" class="btn-submit-post" onclick="submitNewPost()">게시하기</button>
                     </div>
                 </div>
 
                 <div id="feedContent">
-                    <div class="post-card">
-                        <div class="post-card-header">
-                            <div class="nav-icon active" style="margin:0; width:40px; height:40px;">MJ</div>
-                            <div style="margin-left:12px;">
-                                <div style="font-weight:700; font-size:15px;">민지 <span class="artist-tag">ARTIST</span></div>
-                                <div class="post-time">15분 전</div>
-                            </div>
-                        </div>
-                        <div class="post-body">오늘 연습 끝! 여러분 오늘 하루도 수고했어요 🐰 💕 내일 또 만나~!</div>
-                        <div class="post-actions">
-                            <span><i class="fa-regular fa-heart"></i> 2,845</span>
-                            <span><i class="fa-regular fa-comment"></i> 312</span>
-                        </div>
-                        <div class="comment-list" id="comment-list-0"></div>
-                        <div class="comment-input-wrap">
-                            <textarea id="comment-input-0" placeholder="따뜻한 댓글을 남겨주세요..." oninput="checkCommentLength(0)"></textarea>
-                            <div class="comment-btn-row">
-                                <button id="comment-btn-0" class="btn-comment-submit" onclick="submitComment(0)">등록</button>
-                            </div>
-                        </div>
                     </div>
-                </div>
             </div>
 
             <div class="right-sidebar">
                 <div class="widget">
                     <div class="widget-title"><i class="fa-solid fa-chart-simple" style="color:var(--primary); margin-right:8px;"></i> 넛지 통계</div>
                     <div class="stat-grid">
-                        <div class="stat-box"><div class="stat-num" id="totalPosts" style="color:var(--primary)">1</div><div style="font-size:11px; color:var(--text-sub);">게시글</div></div>
+                        <div class="stat-box"><div class="stat-num" id="totalPosts" style="color:var(--primary)">0</div><div style="font-size:11px; color:var(--text-sub);">게시글</div></div>
                         <div class="stat-box"><div class="stat-num" style="color:#ffcc00">0</div><div style="font-size:11px; color:var(--text-sub);">주의</div></div>
                         <div class="stat-box"><div class="stat-num" style="color:#ff5a5a">0</div><div style="font-size:11px; color:var(--text-sub);">위험</div></div>
-                        <div class="stat-box"><div class="stat-num" style="color:#28a745">1</div><div style="font-size:11px; color:var(--text-sub);">안전</div></div>
+                        <div class="stat-box"><div class="stat-num" style="color:#28a745">0</div><div style="font-size:11px; color:var(--text-sub);">안전</div></div>
                     </div>
                 </div>
             </div>
@@ -185,36 +176,24 @@
     </div>
 
     <script>
-        // 1. 페이지 로드 시 실행
-        window.addEventListener('DOMContentLoaded', () => {
-            loadFeed();
-        });
+        window.addEventListener('DOMContentLoaded', loadFeed);
 
-        // 2. 서버에서 게시글 목록을 가져와서 화면에 뿌려주는 함수
         async function loadFeed() {
             try {
                 const response = await fetch("/posts");
                 if (response.ok) {
                     let posts = await response.json();
                     const feed = document.getElementById('feedContent');
-                    
-                    // 기존 샘플 데이터 삭제
                     feed.innerHTML = ''; 
 
-                    // ⭐️ 추가 디테일: 아티스트(celebrity) 글을 무조건 상단으로 정렬
-                    // role이 celebrity인 글이 앞에 오도록 배열을 재정렬합니다.
                     posts.sort((a, b) => {
                         if (a.role === 'celebrity' && b.role !== 'celebrity') return -1;
                         if (a.role !== 'celebrity' && b.role === 'celebrity') return 1;
-                        return 0; // 둘 다 아티스트거나 둘 다 일반인이면 순서 유지
+                        return 0;
                     });
 
-                    // 정렬된 순서대로 화면에 그리기
-                    posts.forEach(post => {
-                        renderPostToFeed(post);
-                    });
+                    posts.forEach(post => renderPostToFeed(post));
 
-                    // 통계 숫자 업데이트
                     const totalPostsEl = document.getElementById('totalPosts');
                     if (totalPostsEl) totalPostsEl.innerText = posts.length;
                 }
@@ -223,17 +202,14 @@
             }
         }
 
-        // 3. 게시글 하나를 화면에 그리는 함수
         function renderPostToFeed(post) {
             const feed = document.getElementById('feedContent');
             const postId = post.id;
             const userName = post.username || "익명";
             const role = post.role || "user";
-            
             const postContent = post.body || post.content || "내용이 없습니다.";
             const artistBadge = (role === 'celebrity') ? '<span class="artist-tag">ARTIST</span>' : '';
 
-            // ⭐️ 넛지 디테일: 연예인 게시글이면 높은 숫자를, 일반 유저면 0을 표시
             const likeCount = (role === 'celebrity') ? '10,534' : '0';
             const commentCount = (role === 'celebrity') ? '623' : (post.comments ? post.comments.length : 0);
 
@@ -255,55 +231,85 @@
                         <span><i class="fa-regular fa-comment"></i> ${commentCount}</span>
                     </div>
                     
-                    <div class="comment-list" id="comment-list-${postId}"></div>
+                    <div class="comment-list" id="comment-list-${postId}">
+                        ${post.comments ? post.comments.map(c => `
+                            <div class="comment-item">
+                                <div class="nav-icon" style="width:30px; height:30px; font-size:10px; background:#ddd;">${(c.username || '익').substring(0,1)}</div>
+                                <div class="comment-content">
+                                    <div class="comment-user">${c.username || '익명'}</div>
+                                    <div class="comment-text">${c.content}</div>
+                                    ${c.image_url ? `<img src="${c.image_url}" class="comment-attached-img">` : ''}
+                                </div>
+                            </div>
+                        `).join('') : ''}
+                    </div>
 
                     <div class="comment-input-wrap">
+                        <div id="comment-img-preview-${postId}" style="display:none; margin-bottom:10px;">
+                            <div class="preview-container">
+                                <img src="" id="preview-img-${postId}">
+                                <div class="cancel-btn" onclick="cancelCommentImg(${postId})"><i class="fa-solid fa-xmark"></i></div>
+                            </div>
+                        </div>
+                        
                         <textarea id="comment-input-${postId}" placeholder="따뜻한 댓글을 남겨주세요..." oninput="checkCommentLength(${postId})"></textarea>
+                        
                         <div class="comment-btn-row">
+                            <div class="comment-tools">
+                                <input type="file" id="comment-file-${postId}" style="display:none;" accept="image/*" onchange="previewCommentImg(this, ${postId})">
+                                <i class="fa-regular fa-image" style="cursor:pointer; color:#888; font-size:18px;" onclick="document.getElementById('comment-file-${postId}').click()"></i>
+                            </div>
                             <button id="comment-btn-${postId}" class="btn-comment-submit" onclick="submitComment(${postId})">등록</button>
                         </div>
                     </div>
                 </div>
             `;
-            
             feed.insertAdjacentHTML('beforeend', postHtml);
+        }
 
-            // (이후 댓글 렌더링 코드는 기존과 동일)
-            if (post.comments && post.comments.length > 0) {
-                // ... 생략 ...
+        // 이미지 미리보기 로직
+        function previewCommentImg(input, postId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewArea = document.getElementById(`comment-img-preview-${postId}`);
+                    const previewImg = document.getElementById(`preview-img-${postId}`);
+                    previewImg.src = e.target.result;
+                    previewArea.style.display = 'block';
+                    checkCommentLength(postId); // 이미지 선택 시에도 등록 버튼 활성화 체크
+                }
+                reader.readAsDataURL(input.files[0]);
             }
         }
 
-        // 4. 게시글 작성 함수
+        // 이미지 선택 취소
+        function cancelCommentImg(postId) {
+            const fileInput = document.getElementById(`comment-file-${postId}`);
+            const previewArea = document.getElementById(`comment-img-preview-${postId}`);
+            fileInput.value = ""; 
+            previewArea.style.display = 'none';
+            checkCommentLength(postId);
+        }
+
         async function submitNewPost() {
             const input = document.getElementById('mainPostInput');
             const content = input.value.trim();
-            const btn = document.getElementById('mainPostBtn');
-
             if (!content) return;
-            btn.disabled = true;
 
             try {
                 const response = await fetch("/posts", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ body: content }) // 서버 필드명에 맞춰 body로 전송
+                    body: JSON.stringify({ body: content })
                 });
-
                 if (response.ok) {
-                    // 글 작성 후 전체 피드 다시 불러오기 (가장 깔끔한 방법)
                     loadFeed();
                     input.value = '';
                     checkPostLength();
                 }
-            } catch (error) {
-                console.error("작성 에러:", error);
-            } finally {
-                btn.disabled = false;
-            }
+            } catch (error) { console.error("작성 에러:", error); }
         }
 
-        // 입력창 활성화 체크 함수들
         function checkPostLength() {
             const input = document.getElementById('mainPostInput');
             const btn = document.getElementById('mainPostBtn');
@@ -313,24 +319,35 @@
         function checkCommentLength(id) {
             const input = document.getElementById(`comment-input-${id}`);
             const btn = document.getElementById(`comment-btn-${id}`);
-            btn.classList.toggle('active', input.value.trim().length > 0);
+            const fileInput = document.getElementById(`comment-file-${id}`);
+            // 텍스트가 있거나, 파일이 선택되어 있으면 활성화
+            const hasContent = input.value.trim().length > 0 || (fileInput.files && fileInput.files.length > 0);
+            btn.classList.toggle('active', hasContent);
         }
 
-        // 댓글 등록 함수
         async function submitComment(postId) {
             const input = document.getElementById(`comment-input-${postId}`);
+            const fileInput = document.getElementById(`comment-file-${postId}`);
             const text = input.value.trim();
-            if (!text) return;
+            
+            if (!text && (!fileInput.files || fileInput.files.length === 0)) return;
+
+            // ⭐️ FormData 생성 (이미지 업로드를 위해)
+            const formData = new FormData();
+            formData.append('content', text);
+            formData.append('post_id', postId);
+            if (fileInput.files[0]) {
+                formData.append('image', fileInput.files[0]);
+            }
 
             try {
                 const response = await fetch("/comments", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ content: text, post_id: postId })
+                    body: formData // multipart/form-data로 자동 설정됨
                 });
 
                 if (response.ok) {
-                    loadFeed(); // 댓글 작성 후에도 피드 새로고침하여 반영
+                    loadFeed();
                 }
             } catch (error) {
                 console.error("댓글 에러:", error);
