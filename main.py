@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, HTTPException
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -51,28 +51,26 @@ class PostCreate(BaseModel):
 
 # 1. 게시글 생성 전용 길 (/posts)
 @app.post("/posts")
+@app.post("/posts")
 async def create_post(item: PostCreate, db: Session = Depends(get_db)):
-    test_user_id = 4  # 현재 사용 중인 유저 ID
-    
-    new_post = models.Post(
-        title="새로운 게시글",
-        body=item.content,
-        user_id=4,
-        status="active"
-    )
-    db.add(new_post)
-    db.commit()
-    db.refresh(new_post)
-    
-    return {
-        "status": "success",
-        "post": {
-            "id": new_post.id,
-            "user": item.user,
-            "body": new_post.body,
-            "created_at": new_post.created_at
-        }
-    }
+    # ⭐️ 아까 SELECT * FROM users; 로 확인한 실제 ID 번호를 넣으세요.
+    actual_user_id = 4 
+
+    try:
+        new_post = models.Post(
+            title="테스트 제목",     # posts 테이블 구조상 NULL 불가일 수 있음
+            body=item.content,
+            user_id=actual_user_id, # 이 번호가 DB에 없으면 500 에러 발생!
+            status="active"
+        )
+        db.add(new_post)
+        db.commit()
+        db.refresh(new_post)
+        return {"status": "success", "post": new_post}
+    except Exception as e:
+        db.rollback()
+        print(f"❌ 저장 실패 원인: {str(e)}") # Azure 로그 스트림에 찍힙니다.
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # 2. 댓글 생성 전용 길 (/comments)
