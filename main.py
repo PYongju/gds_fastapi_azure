@@ -18,7 +18,7 @@ app = FastAPI()
 
 # --- [Azure Blob Storage 설정] ---
 # ⭐️ 메모장에 적어둔 '연결 문자열'을 여기에 붙여넣으세요!
-AZURE_STORAGE_CONNECTION_STRING = "여기에_복사한_연결_문자열_입력"
+AZURE_STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=gdsimagestorage;AccountKey=NeDu38kg+cs/sac4pJqhaPwLexxEEaha9kE39RnFP8C36Ppro35LCzUWZL6huUU29x23hEJ0ZMtD+AStdNrW9A==;EndpointSuffix=core.windows.net"
 CONTAINER_NAME = "images" 
 
 # 클라이언트 초기화
