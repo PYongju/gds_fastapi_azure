@@ -40,12 +40,11 @@ async def read_item(request: Request):
 
 @app.get("/posts")
 async def get_posts(db: Session = Depends(get_db)):
-    # 최신글 순서로 가져오기
     posts = db.query(models.Post).order_by(models.Post.id.desc()).all()
     
     result = []
     for post in posts:
-        # 1. 해당 게시글의 댓글들 정리
+        # 댓글 데이터 구성
         comment_list = []
         for c in post.comments:
             comment_list.append({
@@ -55,14 +54,15 @@ async def get_posts(db: Session = Depends(get_db)):
                 "role": c.author.role if c.author else "user"
             })
 
-        # 2. 게시글 정보에 댓글 리스트 포함
+        # 게시글 데이터 구성 (body와 content 둘 다 넣어버림)
         post_data = {
             "id": post.id,
-            "body": post.body,  # DB 컬럼명이 body인지 content인지 확인!
+            "body": post.body,       # DB 컬럼명
+            "content": post.body,    # 프론트엔드 호환용
             "username": post.author.username if post.author else "익명",
             "role": post.author.role if post.author else "user",
             "created_at": post.created_at.isoformat() if post.created_at else None,
-            "comments": comment_list # ⭐️ 댓글 뭉치 포함
+            "comments": comment_list
         }
         result.append(post_data)
         
