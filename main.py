@@ -33,46 +33,56 @@ async def get_posts(db: Session = Depends(get_db)):
     posts = db.query(models.Post).order_by(models.Post.id.desc()).all()
     return posts
 
-@app.post("/comments")
-async def handle_request(item: ContentRequest, db: Session = Depends(get_db)):
-    # [중요] DBML 제약조건 때문에 users 테이블에 id=1인 유저가 반드시 있어야 합니다.
-    # 만약 유저가 없다면 아래 로직은 에러가 납니다.
-    test_user_id = 4 
+# 게시글 전용 Pydantic 모델
+class PostCreate(BaseModel):
+    content: str
+    user: str
 
-    # 1. 댓글 작성 로직 (post_id가 있을 때)
-    if item.post_id:
-        new_comment = models.Comment(
-            post_id=item.post_id,
-            user_id=test_user_id,
-            content=item.content,
-            created_at=datetime.now(),
-            label="safe" # 기본값
-        )
-        db.add(new_comment)
-        db.commit()
-        db.refresh(new_comment)
-        return {"status": "success", "type": "comment", "comment": new_comment}
+# 1. 게시글 생성 전용 길 (/posts)
+@app.post("/posts")
+async def create_post(item: PostCreate, db: Session = Depends(get_db)):
+    test_user_id = 4  # 현재 사용 중인 유저 ID
     
-    # 2. 게시글 작성 로직 (post_id가 없을 때)
     new_post = models.Post(
-        title="새로운 게시글", # DBML에 title이 필수이므로 추가
-        body=item.content,    # DBML의 body 컬럼에 매칭
+        title="새로운 게시글",
+        body=item.content,
         user_id=test_user_id,
-        status="active",
-        created_at=datetime.now()
+        status="active"
     )
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
     
-    # 프론트엔드 형식을 맞추기 위해 딕셔너리로 반환
     return {
-        "status": "success", 
-        "type": "post", 
+        "status": "success",
         "post": {
             "id": new_post.id,
             "user": item.user,
-            "content": new_post.body,
-            "comments": []
+            "body": new_post.body,
+            "created_at": new_post.created_at
         }
     }
+
+
+# 2. 댓글 생성 전용 길 (/comments)
+class CommentCreate(BaseModel):
+    content: str
+    user: str
+    post_id: int
+
+@app.post("/comments")
+async def create_comment(item: CommentCreate, db: Session = Depends(get_db)):
+    test_user_id = 4
+    
+    new_comment = models.Comment(
+        post_id=item.post_id,
+        user_id=test_user_id,
+        content=item.content,
+        toxicity_score=0.0,
+        label="safe"
+    )
+    db.add(new_comment)
+    db.commit()
+    db.refresh(new_comment)
+    
+    return {"status": "success", "comment": new_comment}

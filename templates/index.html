@@ -197,68 +197,66 @@
 
     // 2. 새 게시글 등록 (DB 저장 연동)
     async function submitNewPost() {
-    const input = document.getElementById('mainPostInput');
-    const content = input.value.trim();
-    if (!content) return;
+        const input = document.getElementById('mainPostInput');
+        const content = input.value.trim();
+        if (!content) return;
 
-    try {
-        const response = await fetch("/comments", { // main.py의 @app.post("/comments") 호출
+        try {
+            const response = await fetch("/posts", { // 이제 /posts로 보냅니다!
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                // ContentRequest 모델 형식을 엄격히 따릅니다.
-                content: content,      // 게시글 내용
-                user: "나",            // 작성자 이름 (DB 저장 시엔 id 4로 처리됨)
-                post_id: null          // 게시글일 때는 null을 보냅니다.
-            })
-        });
+                content: content,
+                user: "나"        // 게시글일 때는 null을 보냅니다.
+                })
+            });
 
-        if (response.ok) {
-            const result = await response.json();
-            // 서버가 보내주는 { "post": { "id":..., "body":... } } 구조에 맞춰 렌더링
-            renderPostToFeed(result.post); 
-            
-            input.value = '';
-            checkPostLength();
-            const totalPostsEl = document.getElementById('totalPosts');
-            totalPostsEl.innerText = parseInt(totalPostsEl.innerText) + 1;
-        } else {
-            // 실패 원인을 더 자세히 보기 위해 로그 출력
-            const errorDetail = await response.json();
-            console.log("실패 상세:", errorDetail);
-            alert("게시글 저장에 실패했습니다.");
+            if (response.ok) {
+                const result = await response.json();
+                // 서버가 보내주는 { "post": { "id":..., "body":... } } 구조에 맞춰 렌더링
+                renderPostToFeed(result.post); 
+                
+                input.value = '';
+                checkPostLength();
+                const totalPostsEl = document.getElementById('totalPosts');
+                totalPostsEl.innerText = parseInt(totalPostsEl.innerText) + 1;
+            } else {
+                // 실패 원인을 더 자세히 보기 위해 로그 출력
+                const errorDetail = await response.json();
+                console.log("실패 상세:", errorDetail);
+                alert("게시글 저장에 실패했습니다.");
+            }
+        } catch (error) {
+            console.error("서버 연결 에러:", error);
         }
-    } catch (error) {
-        console.error("서버 연결 에러:", error);
     }
-}
 
     // 게시글을 화면에 렌더링하는 함수
     function renderPostToFeed(post) {
-    const feed = document.getElementById('feedContent');
-    
-    // 서버 응답 구조(main.py)에 맞게 post.body를 사용합니다.
-    const contentText = post.body || post.content || "내용 없음"; 
+        const feed = document.getElementById('feedContent');
+        
+        // 서버 응답 구조(main.py)에 맞게 post.body를 사용합니다.
+        const contentText = post.body || post.content || "내용 없음"; 
 
-    const newPostHtml = `
-        <div class="post-card" id="post-${post.id}">
-            <div class="post-card-header">
-                <div class="nav-icon" style="margin:0; width:40px; height:40px; background:var(--primary); color:white;">ME</div>
-                <div style="margin-left:12px;">
-                    <div style="font-weight:700; font-size:15px;">나</div>
-                    <div class="post-time">방금 전</div>
+        const newPostHtml = `
+            <div class="post-card" id="post-${post.id}">
+                <div class="post-card-header">
+                    <div class="nav-icon" style="margin:0; width:40px; height:40px; background:var(--primary); color:white;">ME</div>
+                    <div style="margin-left:12px;">
+                        <div style="font-weight:700; font-size:15px;">나</div>
+                        <div class="post-time">방금 전</div>
+                    </div>
                 </div>
+                <div class="post-body">${contentText}</div> <div class="post-actions">
+                    <span><i class="fa-regular fa-heart"></i> 0</span>
+                    <span><i class="fa-regular fa-comment"></i> 0</span>
+                </div>
+                <div class="comment-list" id="comment-list-${post.id}"></div>
+                ...
             </div>
-            <div class="post-body">${contentText}</div> <div class="post-actions">
-                <span><i class="fa-regular fa-heart"></i> 0</span>
-                <span><i class="fa-regular fa-comment"></i> 0</span>
-            </div>
-            <div class="comment-list" id="comment-list-${post.id}"></div>
-            ...
-        </div>
-    `;
-    feed.insertAdjacentHTML('afterbegin', newPostHtml);
-}
+        `;
+        feed.insertAdjacentHTML('afterbegin', newPostHtml);
+    }
 
     // 3. 댓글 버튼 활성화 로직
     function checkCommentLength(id) {
