@@ -253,34 +253,57 @@
             const feed = document.getElementById('feedContent');
             const postId = post.id;
             const userName = post.username || "익명";
+            const role = post.role || "user";
 
-            // 1. 게시글 HTML 생성 (기본 틀)
-            const newPostHtml = `
+            // ⭐️ 아티스트 배지 결정
+            const artistBadge = (role === 'celebrity') ? '<span class="artist-tag">ARTIST</span>' : '';
+
+            // 1. 게시글 카드 HTML 생성
+            const postHtml = `
                 <div class="post-card" id="post-${postId}">
-                    <div class="comment-list" id="comment-list-${postId}">
+                    <div class="post-card-header">
+                        <div class="nav-icon" style="margin:0; width:40px; height:40px; background:var(--primary); color:white;">
+                            ${userName.substring(0,1).toUpperCase()}
                         </div>
+                        <div style="margin-left:12px;">
+                            <div style="font-weight:700; font-size:15px;">${userName} ${artistBadge}</div>
+                            <div class="post-time">방금 전</div>
+                        </div>
+                    </div>
+                    <div class="post-body">${post.body || "내용이 없습니다."}</div> 
+                    <div class="post-actions">
+                        <span><i class="fa-regular fa-heart"></i> 0</span>
+                        <span><i class="fa-regular fa-comment"></i> ${post.comments ? post.comments.length : 0}</span>
+                    </div>
+                    
+                    <div class="comment-list" id="comment-list-${postId}"></div>
 
                     <div class="comment-input-wrap">
-                        <textarea id="comment-input-${postId}" ...></textarea>
+                        <textarea id="comment-input-${postId}" placeholder="따뜻한 댓글을 남겨주세요..." oninput="checkCommentLength(${postId})"></textarea>
                         <div class="comment-btn-row">
-                            <button onclick="submitComment(${postId})" ...>등록</button>
+                            <button id="comment-btn-${postId}" class="btn-comment-submit" onclick="submitComment(${postId})">등록</button>
                         </div>
                     </div>
                 </div>
             `;
-            feed.insertAdjacentHTML('beforeend', newPostHtml);
+            
+            // 게시글을 먼저 화면에 추가
+            feed.insertAdjacentHTML('beforeend', postHtml);
 
-            // 2. ⭐️ 서버에서 받아온 댓글이 있다면 화면에 하나씩 그려주기
+            // 2. ⭐️ 추가된 게시글의 댓글 구역에 실제 댓글들 채워넣기
             if (post.comments && post.comments.length > 0) {
                 const commentListDiv = document.getElementById(`comment-list-${postId}`);
                 post.comments.forEach(comment => {
+                    const cRole = comment.role || "user";
+                    const cBadge = (cRole === 'celebrity') ? '<span class="artist-tag" style="font-size:8px;">ARTIST</span>' : '';
+                    
                     const commentHtml = `
                         <div class="comment-item">
                             <div class="nav-icon" style="width:28px; height:28px; font-size:9px; background:var(--primary); color:white; flex-shrink:0;">
                                 ${comment.username.substring(0,1).toUpperCase()}
                             </div>
                             <div class="comment-content">
-                                <div class="comment-user">${comment.username}</div>
+                                <div class="comment-user">${comment.username} ${cBadge}</div>
                                 <div class="comment-text">${comment.content}</div>
                             </div>
                         </div>

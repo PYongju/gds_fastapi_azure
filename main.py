@@ -40,29 +40,29 @@ async def read_item(request: Request):
 
 @app.get("/posts")
 async def get_posts(db: Session = Depends(get_db)):
-    # 1. 게시글들을 가져옵니다.
+    # 최신글 순서로 가져오기
     posts = db.query(models.Post).order_by(models.Post.id.desc()).all()
     
     result = []
     for post in posts:
-        # 2. 해당 게시글에 달린 댓글들을 리스트로 만듭니다.
+        # 1. 해당 게시글의 댓글들 정리
         comment_list = []
         for c in post.comments:
             comment_list.append({
                 "id": c.id,
                 "content": c.content,
-                "username": c.author.username if c.author else "익명", # 댓글 쓴 사람 이름
-                "created_at": c.created_at
+                "username": c.author.username if c.author else "익명",
+                "role": c.author.role if c.author else "user"
             })
 
-        # 3. 게시글 정보에 댓글 리스트를 합칩니다.
+        # 2. 게시글 정보에 댓글 리스트 포함
         post_data = {
             "id": post.id,
-            "title": post.title,
-            "body": post.body,
+            "body": post.body,  # DB 컬럼명이 body인지 content인지 확인!
             "username": post.author.username if post.author else "익명",
-            "created_at": post.created_at,
-            "comments": comment_list  # ⭐️ 여기에 댓글 뭉치를 넣어줍니다!
+            "role": post.author.role if post.author else "user",
+            "created_at": post.created_at.isoformat() if post.created_at else None,
+            "comments": comment_list # ⭐️ 댓글 뭉치 포함
         }
         result.append(post_data)
         
