@@ -5,6 +5,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
+from fastapi.middleware.cors import CORSMiddleware
 
 # 우리가 만든 파일들 불러오기
 from database import get_db, engine
@@ -14,6 +15,16 @@ import models
 # models.Base.metadata.create_all(bind=engine) 
 
 app = FastAPI()
+
+# 아래 설정을 추가해야 프론트엔드(브라우저)에서 서버로 데이터를 보낼 수 있습니다.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 모든 곳에서 접속 허용 (테스트용)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 templates = Jinja2Templates(directory="templates")
 
 # Pydantic 모델: 프론트엔드에서 보내는 데이터 형식
