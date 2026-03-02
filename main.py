@@ -50,7 +50,7 @@ class PostCreate(BaseModel):
     user: str
 
 # 1. 게시글 생성 전용 길 (/posts)
-@app.post("/posts")
+
 @app.post("/posts")
 async def create_post(item: PostCreate, db: Session = Depends(get_db)):
     # ⭐️ 아까 SELECT * FROM users; 로 확인한 실제 ID 번호를 넣으세요.
