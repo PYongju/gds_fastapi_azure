@@ -57,7 +57,7 @@ async def create_post(item: PostCreate, db: Session = Depends(get_db)):
     new_post = models.Post(
         title="새로운 게시글",
         body=item.content,
-        user_id=test_user_id,
+        user_id=4,
         status="active"
     )
     db.add(new_post)
@@ -83,10 +83,10 @@ class CommentCreate(BaseModel):
 
 @app.post("/comments")
 async def create_comment(item: CommentCreate, db: Session = Depends(get_db)):
-    test_user_id = 4
+    test_user_id = 6
     
     new_comment = models.Comment(
-        post_id=item.post_id,
+        post_id=4,
         user_id=test_user_id,
         content=item.content,
         toxicity_score=0.0,
